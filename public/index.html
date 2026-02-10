@@ -1271,7 +1271,7 @@
 
                 try {
                     const data = await fetchHomeData();
-
+                    console.log(data);
                     // Clear previous content
                     homeContent.innerHTML = "";
 
@@ -1279,33 +1279,25 @@
                     // Assuming data structure has sections like trending, latest, etc.
                     if (data && data.data) {
                         // Display trending anime
-                        if (
-                            data.data.trending &&
-                            data.data.trending.length > 0
-                        ) {
-                            const trendingSection = createAnimeSection(
-                                "Trending Anime",
-                                data.data.trending
-                            );
-                            homeContent.appendChild(trendingSection);
-                        }
+                        const homeList =
+                            data.data.trending ||
+                            data.data.latest ||
+                            data.data.ongoing ||
+                            data.data.complete ||
+                            data.data;
 
-                        // Display latest episodes
-                        if (data.data.latest && data.data.latest.length > 0) {
-                            const latestSection = createAnimeSection(
-                                "Episode Terbaru",
-                                data.data.latest
+                        if (Array.isArray(homeList) && homeList.length > 0) {
+                            const section = createAnimeSection(
+                                "Anime Terbaru",
+                                homeList
                             );
-                            homeContent.appendChild(latestSection);
-                        }
-
-                        // Display popular anime
-                        if (data.data.popular && data.data.popular.length > 0) {
-                            const popularSection = createAnimeSection(
-                                "Anime Populer",
-                                data.data.popular
-                            );
-                            homeContent.appendChild(popularSection);
+                            homeContent.appendChild(section);
+                        } else {
+                            homeContent.innerHTML = `
+        <div class="error-message">
+            <h3>Tidak ada data anime</h3>
+        </div>
+        `;
                         }
                     } else {
                         // Fallback if data structure is different
