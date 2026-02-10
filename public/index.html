@@ -1279,25 +1279,25 @@
                     // Assuming data structure has sections like trending, latest, etc.
                     if (data && data.data) {
                         // Display trending anime
-                        const homeList =
-                            data.data.trending ||
-                            data.data.latest ||
-                            data.data.ongoing ||
-                            data.data.complete ||
-                            data.data;
+                        const ongoing = data.data.ongoing?.animeList || [];
+                        const completed = data.data.completed?.animeList || [];
 
-                        if (Array.isArray(homeList) && homeList.length > 0) {
-                            const section = createAnimeSection(
-                                "Anime Terbaru",
-                                homeList
+                        homeContent.innerHTML = "";
+
+                        if (ongoing.length > 0) {
+                            const section1 = createAnimeSection(
+                                "Ongoing Anime",
+                                ongoing
                             );
-                            homeContent.appendChild(section);
-                        } else {
-                            homeContent.innerHTML = `
-        <div class="error-message">
-            <h3>Tidak ada data anime</h3>
-        </div>
-        `;
+                            homeContent.appendChild(section1);
+                        }
+
+                        if (completed.length > 0) {
+                            const section2 = createAnimeSection(
+                                "Completed Anime",
+                                completed
+                            );
+                            homeContent.appendChild(section2);
                         }
                     } else {
                         // Fallback if data structure is different
