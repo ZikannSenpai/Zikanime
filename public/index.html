@@ -797,7 +797,7 @@
     
     <script>
         // Konfigurasi API
-        const API_BASE_URL = 'https://www.sankavollerei.com';
+        const API_BASE_URL = '/anime/home';
         
         // State aplikasi
         let currentPage = 1;
@@ -1180,7 +1180,7 @@
                 
                 // Process and display home data
                 // Assuming data structure has sections like trending, latest, etc.
-                if (data.data) {
+                if (data && data.data) {
                     // Display trending anime
                     if (data.data.trending && data.data.trending.length > 0) {
                         const trendingSection = createAnimeSection('Trending Anime', data.data.trending);
