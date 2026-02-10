@@ -1358,7 +1358,8 @@
                     // Process and display home data
                     // Assuming data structure has sections like trending, latest, etc.
                     if (data && data.data) {
-                        // Display trending anime  const ongoing = parseAnimeList(data.ongoing);
+                        // Display trending anime
+                        const ongoing = parseAnimeList(data.ongoing);
                         const completed = parseAnimeList(data.completed);
 
                         homeContent.innerHTML = "";
