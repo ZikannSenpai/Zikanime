@@ -192,12 +192,15 @@
                 border-radius: 8px;
                 overflow: hidden;
                 box-shadow: var(--card-shadow);
-                transition:
-                    transform 0.4s,
-                    opacity 0.8s;
+                transition: all 0.35s ease;
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(15px);
                 cursor: pointer;
+            }
+
+            .anime-card.show {
+                opacity: 1;
+                transform: translateY(0);
             }
 
             .anime-card.fade-in {
@@ -672,6 +675,50 @@
                     max-height: 150px;
                 }
             }
+            .anime-wrapper {
+                position: relative;
+                overflow: hidden;
+            }
+
+            .anime-row {
+                display: flex;
+                gap: 16px;
+                overflow-x: auto;
+                overflow-y: hidden;
+                padding: 10px 0;
+                scroll-behavior: smooth;
+            }
+
+            .anime-row::-webkit-scrollbar {
+                height: 6px;
+            }
+
+            .anime-row::-webkit-scrollbar-thumb {
+                background: rgba(255, 255, 255, 0.2);
+                border-radius: 10px;
+            }
+
+            /* fade kiri kanan */
+            .anime-wrapper::before,
+            .anime-wrapper::after {
+                content: "";
+                position: absolute;
+                top: 0;
+                width: 60px;
+                height: 100%;
+                pointer-events: none;
+                z-index: 2;
+            }
+
+            .anime-wrapper::before {
+                left: 0;
+                background: linear-gradient(to right, #000, transparent);
+            }
+
+            .anime-wrapper::after {
+                right: 0;
+                background: linear-gradient(to left, #000, transparent);
+            }
         </style>
     </head>
     <body>
@@ -861,6 +908,11 @@
         </footer>
 
         <script>
+            setTimeout(() => {
+                document.querySelectorAll(".anime-card").forEach(el => {
+                    el.classList.add("show");
+                });
+            }, 50);
             // Konfigurasi API
             const API_BASE_URL = "/api";
 
