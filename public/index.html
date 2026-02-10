@@ -192,15 +192,22 @@
                 border-radius: 8px;
                 overflow: hidden;
                 box-shadow: var(--card-shadow);
-                transition: all 0.35s ease;
-                opacity: 0;
-                transform: translateY(15px);
                 cursor: pointer;
-            }
 
+                /* animasi scroll */
+                opacity: 0;
+                transform: translateY(30px) scale(0.96);
+                filter: blur(6px);
+
+                transition:
+                    opacity 0.6s ease,
+                    transform 0.6s ease,
+                    filter 0.6s ease;
+            }
             .anime-card.show {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translateY(0) scale(1);
+                filter: blur(0);
             }
 
             .anime-card.fade-in {
@@ -215,6 +222,26 @@
 
             .anime-card:hover {
                 transform: translateY(-8px);
+            }
+
+            .anime-card:active {
+                transform: scale(1.08);
+                transition: transform 0.15s ease;
+            }
+            .anime-card.clicked {
+                animation: clickPop 0.25s ease;
+            }
+
+            @keyframes clickPop {
+                0% {
+                    transform: scale(1);
+                }
+                50% {
+                    transform: scale(1.12);
+                }
+                100% {
+                    transform: scale(1);
+                }
             }
 
             .anime-poster {
@@ -726,8 +753,7 @@
         <header>
             <div class="header-container">
                 <div class="logo">
-                    <i class="fas fa-play-circle"></i>
-                    <span>Zik</span>Anime
+                    <i class="fas fa-play-circle"></i><span>Zik</span>Anime
                 </div>
 
                 <button class="mobile-menu-btn" id="mobileMenuBtn">
@@ -908,11 +934,30 @@
         </footer>
 
         <script>
-            setTimeout(() => {
-                document.querySelectorAll(".anime-card").forEach(el => {
-                    el.classList.add("show");
+            const cards = document.querySelectorAll(".anime-card");
+
+            const observer = new IntersectionObserver(
+                entries => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add("show");
+                        } else {
+                            entry.target.classList.remove("show");
+                        }
+                    });
+                },
+                { threshold: 0.25 }
+            );
+
+            cards.forEach(card => {
+                observer.observe(card);
+
+                // efek klik bounce
+                card.addEventListener("click", () => {
+                    card.classList.add("clicked");
+                    setTimeout(() => card.classList.remove("clicked"), 250);
                 });
-            }, 50);
+            });
             // Konfigurasi API
             const API_BASE_URL = "/api";
 
@@ -964,7 +1009,44 @@
                 setupScrollEffects();
                 loadHomeData();
             });
+            function showError(msg) {
+                const el = document.createElement("div");
+                el.className = "error-message";
+                el.textContent = msg;
+                document.body.appendChild(el);
+            }
+            async function safeFetch(endpoint) {
+                try {
+                    const res = await fetch(API_BASE_URL + endpoint);
 
+                    if (!res.ok) throw new Error("Network error");
+
+                    const data = await res.json();
+
+                    if (!data || data.status !== "success") {
+                        throw new Error("API invalid");
+                    }
+
+                    return data.data;
+                } catch (err) {
+                    console.error("Fetch error:", err);
+                    showError("Gagal memuat data");
+                    return null;
+                }
+            }
+            function parseAnimeList(data) {
+                if (!data) return [];
+
+                if (Array.isArray(data)) return data;
+
+                if (data.animeList) return data.animeList;
+
+                if (data.ongoing?.animeList) return data.ongoing.animeList;
+
+                if (data.completed?.animeList) return data.completed.animeList;
+
+                return [];
+            }
             // Setup event listeners
             function setupEventListeners() {
                 // Mobile menu toggle
@@ -1203,34 +1285,6 @@
                 }
             }
 
-            async function fetchSchedule() {
-                try {
-                    const response = await fetch(
-                        `${API_BASE_URL}/anime/schedule`
-                    );
-                    if (!response.ok)
-                        throw new Error("Network response was not ok");
-                    return await response.json();
-                } catch (error) {
-                    console.error("Error fetching schedule:", error);
-                    throw error;
-                }
-            }
-
-            async function fetchAllAnime() {
-                try {
-                    const response = await fetch(
-                        `${API_BASE_URL}/anime/unlimited`
-                    );
-                    if (!response.ok)
-                        throw new Error("Network response was not ok");
-                    return await response.json();
-                } catch (error) {
-                    console.error("Error fetching all anime:", error);
-                    throw error;
-                }
-            }
-
             async function fetchAnimeDetail(slug) {
                 try {
                     const response = await fetch(
@@ -1255,32 +1309,6 @@
                     return await response.json();
                 } catch (error) {
                     console.error("Error fetching complete anime:", error);
-                    throw error;
-                }
-            }
-
-            async function fetchOngoingAnime() {
-                try {
-                    const response = await fetch(
-                        `${API_BASE_URL}/anime/ongoing-anime`
-                    );
-                    if (!response.ok)
-                        throw new Error("Network response was not ok");
-                    return await response.json();
-                } catch (error) {
-                    console.error("Error fetching ongoing anime:", error);
-                    throw error;
-                }
-            }
-
-            async function fetchGenres() {
-                try {
-                    const response = await fetch(`${API_BASE_URL}/anime/genre`);
-                    if (!response.ok)
-                        throw new Error("Network response was not ok");
-                    return await response.json();
-                } catch (error) {
-                    console.error("Error fetching genres:", error);
                     throw error;
                 }
             }
@@ -1322,7 +1350,7 @@
                 homeContent.style.display = "none";
 
                 try {
-                    const data = await fetchHomeData();
+                    const data = await safeFetch("/anime/home");
                     console.log(data);
                     // Clear previous content
                     homeContent.innerHTML = "";
@@ -1330,27 +1358,20 @@
                     // Process and display home data
                     // Assuming data structure has sections like trending, latest, etc.
                     if (data && data.data) {
-                        // Display trending anime
-                        const ongoing = data.data.ongoing?.animeList || [];
-                        const completed = data.data.completed?.animeList || [];
+                        // Display trending anime  const ongoing = parseAnimeList(data.ongoing);
+                        const completed = parseAnimeList(data.completed);
 
                         homeContent.innerHTML = "";
 
-                        if (ongoing.length > 0) {
-                            const section1 = createAnimeSection(
-                                "Ongoing Anime",
-                                ongoing
+                        if (ongoing.length)
+                            homeContent.appendChild(
+                                createAnimeSection("Ongoing", ongoing)
                             );
-                            homeContent.appendChild(section1);
-                        }
 
-                        if (completed.length > 0) {
-                            const section2 = createAnimeSection(
-                                "Completed Anime",
-                                completed
+                        if (completed.length)
+                            homeContent.appendChild(
+                                createAnimeSection("Completed", completed)
                             );
-                            homeContent.appendChild(section2);
-                        }
                     } else {
                         // Fallback if data structure is different
                         homeContent.innerHTML = `
@@ -1392,7 +1413,7 @@
                 ongoingContent.style.display = "none";
 
                 try {
-                    const data = await fetchOngoingAnime();
+                    const data = await safeFetch("/anime/ongoing-anime");
 
                     ongoingContent.innerHTML = "";
 
@@ -1511,35 +1532,26 @@
                 scheduleContent.style.display = "none";
 
                 try {
-                    const data = await fetchSchedule();
+                    const data = await safeFetch("/anime/schedule");
 
                     scheduleContent.innerHTML = "";
 
                     if (data.data) {
                         // Assuming data is organized by days
-                        const days = [
-                            "Senin",
-                            "Selasa",
-                            "Rabu",
-                            "Kamis",
-                            "Jumat",
-                            "Sabtu",
-                            "Minggu"
-                        ];
+                        if (!data || !Array.isArray(data)) return;
 
-                        days.forEach(day => {
-                            if (data.data[day] && data.data[day].length > 0) {
-                                const daySection =
-                                    document.createElement("div");
-                                daySection.className = "schedule-day";
-                                daySection.innerHTML = `
-                                <h3 style="margin: 1.5rem 0 1rem 0; color: var(--accent-color);">${day}</h3>
-                                <div class="anime-grid" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));">
-                                    ${data.data[day].map(anime => createAnimeCardHTML(anime)).join("")}
-                                </div>
-                            `;
-                                scheduleContent.appendChild(daySection);
-                            }
+                        const container =
+                            document.getElementById("scheduleContent");
+                        container.innerHTML = "";
+
+                        data.forEach(dayBlock => {
+                            const day = dayBlock.day || "Unknown";
+                            const animeList = dayBlock.anime_list || [];
+
+                            if (animeList.length === 0) return;
+
+                            const section = createAnimeSection(day, animeList);
+                            container.appendChild(section);
                         });
                     } else {
                         scheduleContent.innerHTML = `
@@ -1577,7 +1589,7 @@
                 genresContent.style.display = "none";
 
                 try {
-                    const data = await fetchGenres();
+                    const data = await safeFetch("/anime/genres");
 
                     genresContent.innerHTML = "";
 
@@ -1915,7 +1927,7 @@
 
                 try {
                     // Fetch all anime first, then filter
-                    const data = await fetchAllAnime();
+                    const data = await safeFetch("/anime/unlimited");
 
                     searchResults.innerHTML = "";
 
