@@ -116,7 +116,7 @@ function setupEventListeners() {
             const btn = e.target.closest(".watch-btn");
             const animeSlug = btn.dataset.animeId;
             const animeTitle = btn.dataset.title;
-
+            console.log(animeSlug);
             loadAnimeDetail(animeSlug, animeTitle);
         }
 
@@ -127,6 +127,7 @@ function setupEventListeners() {
                 const animeSlug = card.dataset.animeId;
                 const animeTitle =
                     card.querySelector(".anime-title").textContent;
+                console.log(animeSlug);
                 loadAnimeDetail(animeSlug, animeTitle);
             }
         }
