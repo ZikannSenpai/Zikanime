@@ -306,7 +306,7 @@ async function fetchAllAnime() {
 
 async function fetchAnimeDetail(slug) {
     try {
-        const response = await fetch(`${API_BASE_URL}/anime/anime/${slug}`);
+        const response = await fetch(`${API_BASE_URL}/anime/detail/${slug}`);
         if (!response.ok) throw new Error("Network response was not ok");
         return await response.json();
     } catch (error) {
