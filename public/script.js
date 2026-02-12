@@ -116,7 +116,7 @@ function setupEventListeners() {
             const btn = e.target.closest(".watch-btn");
             const animeSlug = btn.dataset.slug;
             const animeTitle = btn.dataset.title;
-            console.log(btn.dataset);
+
             loadAnimeDetail(animeSlug, animeTitle);
         }
 
@@ -127,7 +127,7 @@ function setupEventListeners() {
                 const animeSlug = card.dataset.slug;
                 const animeTitle =
                     card.querySelector(".anime-title").textContent;
-                console.log(card.dataset);
+
                 loadAnimeDetail(animeSlug, animeTitle);
             }
         }
@@ -308,7 +308,7 @@ async function fetchAllAnime() {
 async function fetchAnimeDetail(slug) {
     try {
         const response = await fetch(`${API_BASE_URL}/anime/anime/${slug}`);
-        console.log(response.data);
+        console.log(response);
         if (!response.ok) throw new Error("Network response was not ok");
         return await response.json();
     } catch (error) {
@@ -782,7 +782,7 @@ async function loadAnimeDetail(slug, title) {
                                         ? `
                                     <div class="anime-detail-synopsis">
                                         <h3>Sinopsis</h3>
-                                        <p>${anime.synopsis}</p>
+                                        <p>${anime.synopsis.paragraphs[0]}</p>
                                     </div>
                                 `
                                         : ""
@@ -837,7 +837,7 @@ async function loadAnimeDetail(slug, title) {
                         <i class="fas fa-exclamation-circle"></i>
                         <h3>Gagal memuat detail anime</h3>
                         <p>Silakan coba lagi nanti</p>
-                        <button class="watch-btn" onclick="showHomePage()" style="margin-top: 1rem; width: auto;">Kembali ke Beranda</button>
+                        <button class="watch-btn" id="homeBtn" onclick="showHomePage()" style="margin-top: 1rem; width: auto;">Kembali ke Beranda</button>
                     </div>
                 `;
     }
@@ -1024,7 +1024,7 @@ function createAnimeSection(title, animeList) {
 function createAnimeCardElement(anime) {
     const card = document.createElement("div");
     card.className = "anime-card";
-    card.dataset.slug = anime.slug;
+    card.dataset.slug = anime.animeId;
 
     card.innerHTML = createAnimeCardHTML(anime);
     return card;
