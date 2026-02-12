@@ -114,7 +114,7 @@ function setupEventListeners() {
         if (e.target.closest(".watch-btn")) {
             e.preventDefault();
             const btn = e.target.closest(".watch-btn");
-            const animeSlug = btn.dataset.href;
+            const animeSlug = btn.dataset.animeId;
             const animeTitle = btn.dataset.title;
 
             loadAnimeDetail(animeSlug, animeTitle);
@@ -124,7 +124,7 @@ function setupEventListeners() {
         if (e.target.closest(".anime-card")) {
             const card = e.target.closest(".anime-card");
             if (!e.target.closest(".watch-btn")) {
-                const animeSlug = card.dataset.href;
+                const animeSlug = card.dataset.animeId;
                 const animeTitle =
                     card.querySelector(".anime-title").textContent;
                 loadAnimeDetail(animeSlug, animeTitle);
