@@ -308,7 +308,7 @@ async function fetchAllAnime() {
 async function fetchAnimeDetail(slug) {
     try {
         const response = await fetch(`${API_BASE_URL}/anime/anime/${slug}`);
-        console.log(response);
+        console.log(response.data);
         if (!response.ok) throw new Error("Network response was not ok");
         return await response.json();
     } catch (error) {
@@ -798,17 +798,17 @@ async function loadAnimeDetail(slug, title) {
                     `;
 
             // Load episodes if available
-            if (anime.episodes_list && anime.episodes_list.length > 0) {
+            if (anime.episodeList && anime.episodeList.length > 0) {
                 const episodesSection = document.createElement("div");
                 episodesSection.className = "episodes-section";
                 episodesSection.innerHTML = `
                             <h3>Daftar Episode</h3>
                             <div class="episodes-grid">
-                                ${anime.episodes_list
+                                ${anime.episodeList
                                     .map(
                                         ep => `
-                                    <div class="episode-card" data-slug="${ep.slug}" data-title="${ep.title || `Episode ${ep.number}`}">
-                                        <div>Episode ${ep.number}</div>
+                                    <div class="episode-card" data-slug="${ep.episodeId}" data-title="${ep.title || `Episode ${ep.number}`}">
+                                        <div>Episode ${ep.eps || ep.number}</div>
                                         <small>${ep.title || ""}</small>
                                     </div>
                                 `
@@ -819,14 +819,14 @@ async function loadAnimeDetail(slug, title) {
                 animeDetailSection.appendChild(episodesSection);
 
                 // Store episodes for later use
-                currentEpisodes = anime.episodes_list;
+                currentEpisodes = anime.episodeList;
             }
         } else {
             animeDetailSection.innerHTML = `
                         <div class="error-message">
                             <i class="fas fa-exclamation-circle"></i>
                             <h3>Gagal memuat detail anime</h3>
-                            <button class="watch-btn" onclick="showHomePage()" style="margin-top: 1rem; width: auto;">Kembali ke Beranda</button>
+                            <button class="watch-btn" id ="homeBtn"onclick="showHomePage()" style="margin-top: 1rem; width: auto;">Kembali ke Beranda</button>
                         </div>
                     `;
         }
@@ -857,10 +857,10 @@ async function loadEpisode(slug, title) {
             const episode = data.data;
 
             // Update video player
-            if (episode.stream_url) {
+            if (episode.defaultStreamingUrl) {
                 videoPlayer.innerHTML = `
                             <iframe 
-                                src="${episode.stream_url}" 
+                                src="${episode.defaultStreamingUrl}" 
                                 frameborder="0" 
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                                 allowfullscreen>
@@ -888,14 +888,15 @@ async function loadEpisode(slug, title) {
                 currentEpisodes.forEach(ep => {
                     const episodeBtn = document.createElement("button");
                     episodeBtn.className = "episode-btn";
-                    if (ep.slug === slug) episodeBtn.classList.add("active");
+                    if (ep.episodeId === slug)
+                        episodeBtn.classList.add("active");
                     episodeBtn.textContent = `Ep ${ep.number}`;
-                    episodeBtn.dataset.slug = ep.slug;
+                    episodeBtn.dataset.slug = ep.episodeId;
                     episodeBtn.dataset.title =
                         ep.title || `Episode ${ep.number}`;
                     episodeBtn.addEventListener("click", () => {
                         loadEpisode(
-                            ep.slug,
+                            ep.episodeId,
                             ep.title || `Episode ${ep.number}`
                         );
                     });
