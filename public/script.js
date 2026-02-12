@@ -114,9 +114,9 @@ function setupEventListeners() {
         if (e.target.closest(".watch-btn")) {
             e.preventDefault();
             const btn = e.target.closest(".watch-btn");
-            const animeSlug = btn.dataset.animeId;
+            const animeSlug = btn.dataset.slug;
             const animeTitle = btn.dataset.title;
-            console.log(animeSlug);
+            console.log(btn.dataset);
             loadAnimeDetail(animeSlug, animeTitle);
         }
 
@@ -124,10 +124,10 @@ function setupEventListeners() {
         if (e.target.closest(".anime-card")) {
             const card = e.target.closest(".anime-card");
             if (!e.target.closest(".watch-btn")) {
-                const animeSlug = card.dataset.animeId;
+                const animeSlug = card.dataset.slug;
                 const animeTitle =
                     card.querySelector(".anime-title").textContent;
-                console.log(animeSlug);
+                console.log(card.dataset);
                 loadAnimeDetail(animeSlug, animeTitle);
             }
         }
@@ -1038,7 +1038,7 @@ function createAnimeCardHTML(anime) {
     const type = anime.type || "TV";
     const score = anime.score || "N/A";
     const episodes = anime.episodes || "?";
-
+    const id = anime.animeId || "?";
     return `
                 <img src="${poster}" alt="${title}" class="anime-poster" 
                      onerror="this.src='https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'">
@@ -1052,7 +1052,7 @@ function createAnimeCardHTML(anime) {
                         <span class="anime-type">${type}</span>
                         <span>${episodes} eps</span>
                     </div>
-                    <button class="watch-btn" data-slug="${anime.slug}" data-title="${title}">
+                    <button class="watch-btn" data-slug="${id}" data-title="${title}">
                         <i class="fas fa-play"></i> Tonton
                     </button>
                 </div>
