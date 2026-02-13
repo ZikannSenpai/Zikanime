@@ -115,6 +115,7 @@ function setupEventListeners() {
             e.preventDefault();
             const btn = e.target.closest(".watch-btn");
             const animeSlug = btn.dataset.slug;
+            console.log(btn.dataset);
             const animeTitle = btn.dataset.title;
 
             loadAnimeDetail(animeSlug, animeTitle);
@@ -125,6 +126,7 @@ function setupEventListeners() {
             const card = e.target.closest(".anime-card");
             if (!e.target.closest(".watch-btn")) {
                 const animeSlug = card.dataset.slug;
+                console.log(card.dataset);
                 const animeTitle =
                     card.querySelector(".anime-title").textContent;
 
@@ -826,7 +828,7 @@ async function loadAnimeDetail(slug, title) {
                         <div class="error-message">
                             <i class="fas fa-exclamation-circle"></i>
                             <h3>Gagal memuat detail anime</h3>
-                            <button class="watch-btn" id ="homeBtn"onclick="showHomePage()" style="margin-top: 1rem; width: auto;">Kembali ke Beranda</button>
+                            <button class="watch-btn" id ="homeBtn" onclick="showHomePage()" style="margin-top: 1rem; width: auto;">Kembali ke Beranda</button>
                         </div>
                     `;
         }
@@ -1025,7 +1027,7 @@ function createAnimeSection(title, animeList) {
 function createAnimeCardElement(anime) {
     const card = document.createElement("div");
     card.className = "anime-card";
-    card.dataset.slug = anime.animeId;
+    card.dataset.slug = anime.animeId || anime.synopsis.connections[0].animeId;
 
     card.innerHTML = createAnimeCardHTML(anime);
     return card;
