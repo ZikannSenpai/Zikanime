@@ -397,6 +397,7 @@ async function loadHomeData() {
     try {
         const data = await fetchHomeData();
         // Clear previous content
+        console.log(data.data);
         homeContent.innerHTML = "";
 
         // Process and display home data
@@ -1056,7 +1057,6 @@ function createAnimeCardElement(anime) {
 }
 
 function createAnimeCardHTML(anime) {
-    console.log("cach", anime);
     const title = anime.title || "Judul Tidak Tersedia";
     const poster =
         anime.poster ||
