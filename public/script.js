@@ -1055,6 +1055,7 @@ function createAnimeCardElement(anime) {
 }
 
 function createAnimeCardHTML(anime) {
+    console.log(anime);
     const title = anime.title || "Judul Tidak Tersedia";
     const poster =
         anime.poster ||
