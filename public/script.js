@@ -908,10 +908,9 @@ async function loadEpisode(slug, title) {
                     episodeBtn.className = "episode-btn";
                     if (ep.episodeId === slug)
                         episodeBtn.classList.add("active");
-                    episodeBtn.textContent = `Ep ${ep.number}`;
+                    episodeBtn.textContent = `Ep ${ep.eps}`;
                     episodeBtn.dataset.slug = ep.episodeId;
-                    episodeBtn.dataset.title =
-                        ep.title || `Episode ${ep.number}`;
+                    episodeBtn.dataset.title = ep.title || `Episode ${ep.eps}`;
                     episodeBtn.addEventListener("click", () => {
                         loadEpisode(
                             ep.episodeId,
@@ -1055,7 +1054,7 @@ function createAnimeCardElement(anime) {
 }
 
 function createAnimeCardHTML(anime) {
-    console.log(anime);
+    console.log("cach", anime);
     const title = anime.title || "Judul Tidak Tersedia";
     const poster =
         anime.poster ||
