@@ -406,7 +406,6 @@ async function loadHomeData() {
             // Display trending anime
             const ongoing = data.data.ongoing?.animeList || [];
             const completed = data.data.completed?.animeList || [];
-            console.log("ongoing:", ongoing);
             homeContent.innerHTML = "";
 
             if (ongoing.length > 0) {
@@ -1048,6 +1047,7 @@ function createAnimeSection(title, animeList) {
 
 function createAnimeCardElement(anime) {
     const card = document.createElement("div");
+    console.log(anime);
     card.className = "anime-card";
     card.dataset.slug = anime.animeId || anime.synopsis.connections[0].animeId;
 
