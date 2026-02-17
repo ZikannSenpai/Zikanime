@@ -725,7 +725,13 @@ async function loadAnimeByGenre(slug, genreName, page = 1) {
             if (data.pagination) {
                 const pagination = document.createElement("div");
                 pagination.className = "pagination";
-                createGenrePagination(pagination, data.pagination, 1);
+                createGenrePagination(
+                    pagination,
+                    data.pagination,
+                    slug,
+                    genreName,
+                    page
+                );
                 genresContent.appendChild(pagination);
             }
         } else {
@@ -779,23 +785,29 @@ async function loadAnimeDetail(slug, title) {
                                     ${anime.status ? `<span class="meta-item">${anime.status}</span>` : ""}
                                     ${anime.score ? `<span class="meta-item"><i class="fas fa-star" style="color: #ffc107;"></i> ${anime.score}</span>` : ""}
                                     ${anime.episodes ? `<span class="meta-item">${anime.episodes} Episode</span>` : ""}
-                                    ${anime.duration ? `<span class="meta-item">${anime.duration}</span>` : ""}
+                                    ${anime.duration ? `<span class="meta-item">${anime.duration}</span>` : ""}${
+                                        anime.genreList
+                                            ? `
+    <div class="genre-list">
+      ${anime.genreList
+          .map(genre => {
+              const slug =
+                  genre.genreId ||
+                  genre.title.toLowerCase().replace(/\s+/g, "-");
+
+              return `
+            <span class="genre-tag"
+              data-slug="${slug}">
+              ${genre.title}
+            </span>
+          `;
+          })
+          .join("")}
+    </div>
+  `
+                                            : ""
+                                    }
                                 </div>
-                                ${
-                                    anime.genreList
-                                        ? `
-                                    <div class="genre-list">
-                                        ${anime.genreList
-                                            .map(
-                                                genre => `
-                                            <span class="genre-tag">${genre.title || "Tidak ada genre"}</span>
-                                        `
-                                            )
-                                            .join("")}
-                                    </div>
-                                `
-                                        : ""
-                                }
                                 ${
                                     anime.synopsis
                                         ? `

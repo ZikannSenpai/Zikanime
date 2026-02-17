@@ -110,56 +110,62 @@ function setupEventListeners() {
 
     // Anime card click events (delegation)
     document.addEventListener("click", function (e) {
-        // Watch button click
-        if (e.target.closest(".watch-btn")) {
+        const watchBtn = e.target.closest(".watch-btn");
+        const card = e.target.closest(".anime-card");
+
+        // Watch button
+        if (watchBtn) {
             e.preventDefault();
-            const btn = e.target.closest(".watch-btn");
-            const animeSlug = btn.dataset.slug;
-            console.log(btn.dataset);
-            const animeTitle = btn.dataset.title;
 
-            loadAnimeDetail(animeSlug, animeTitle);
-        }
+            const slug = watchBtn.dataset.slug;
+            const title = watchBtn.dataset.title;
 
-        // Anime card click (for details)
-        if (e.target.closest(".anime-card")) {
-            const card = e.target.closest(".anime-card");
-            if (!e.target.closest(".watch-btn")) {
-                const animeSlug = card.dataset.slug;
-                console.log(card.dataset);
-                const animeTitle =
-                    card.querySelector(".anime-title").textContent;
-
-                loadAnimeDetail(animeSlug, animeTitle);
+            if (!slug) {
+                console.warn("Watch tanpa slug:", watchBtn);
+                return;
             }
+
+            loadAnimeDetail(slug, title);
+            return;
         }
 
-        // Genre tag click
-        if (e.target.closest(".genre-tag")) {
+        // Card click
+        if (card) {
+            const slug = card.dataset.slug;
+
+            if (!slug) {
+                console.warn("Card tanpa slug:", card);
+                return;
+            }
+
+            const title = card.querySelector(".anime-title")?.textContent || "";
+
+            loadAnimeDetail(slug, title);
+            return;
+        }
+
+        // Episode
+        const ep = e.target.closest(".episode-card");
+        if (ep) {
+            loadEpisode(ep.dataset.slug, ep.dataset.title);
+            return;
+        }
+
+        // Genre
+        const tag = e.target.closest(".genre-tag");
+        if (tag) {
             e.preventDefault();
-            const tag = e.target.closest(".genre-tag");
-            const genreSlug = tag.dataset.slug;
-            const genreName = tag.textContent;
-            loadAnimeByGenre(genreSlug, genreName);
+            loadAnimeByGenre(tag.dataset.slug, tag.textContent);
+            return;
         }
 
-        // Episode card click
-        if (e.target.closest(".episode-card")) {
-            const card = e.target.closest(".episode-card");
-            const episodeSlug = card.dataset.slug;
-            const episodeTitle = card.dataset.title;
-            loadEpisode(episodeSlug, episodeTitle);
-        }
-
-        // Pagination button click
-        if (e.target.closest(".page-btn")) {
-            const btn = e.target.closest(".page-btn");
-            if (!btn.disabled) {
-                const page = parseInt(btn.dataset.page);
-                if (page) {
-                    currentPage = page;
-                    loadCompleteAnime(page);
-                }
+        // Pagination
+        const pageBtn = e.target.closest(".page-btn");
+        if (pageBtn && !pageBtn.disabled) {
+            const page = parseInt(pageBtn.dataset.page);
+            if (page) {
+                currentPage = page;
+                loadCompleteAnime(page);
             }
         }
     });
@@ -318,10 +324,8 @@ async function fetchAllAnime() {
 }
 
 async function fetchAnimeDetail(slug) {
-    console.log("slug:", slug);
     try {
         const response = await fetch(`${API_BASE_URL}/anime/anime/${slug}`);
-        console.log(response);
         if (!response.ok) throw new Error("Network response was not ok");
         return await response.json();
     } catch (error) {
@@ -365,9 +369,11 @@ async function fetchGenres() {
     }
 }
 
-async function fetchAnimeByGenre(slug) {
+async function fetchAnimeByGenre(slug, page = 1) {
     try {
-        const response = await fetch(`${API_BASE_URL}/anime/genre/${slug}`);
+        const response = await fetch(
+            `${API_BASE_URL}/anime/genre/${slug}?page=${page}`
+        );
         if (!response.ok) throw new Error("Network response was not ok");
         return await response.json();
     } catch (error) {
@@ -640,12 +646,12 @@ async function loadGenres() {
             genresList.className = "genre-list";
             genresList.style.marginBottom = "2rem";
 
-            data.data.forEach(genre => {
+            data.data.genreList.forEach(genre => {
                 const genreTag = document.createElement("span");
                 genreTag.className = "genre-tag";
-                genreTag.textContent = genre.name || genre;
-                genreTag.dataset.slug =
-                    genre.slug || genre.toLowerCase().replace(/ /g, "-");
+                genreTag.textContent = genre.title || genre;
+                genreTag.dataset.slug = genre.genreId;
+                console.log(genreTag.dataset);
                 genreTag.style.cursor = "pointer";
                 genresList.appendChild(genreTag);
             });
@@ -679,18 +685,19 @@ async function loadGenres() {
 }
 
 // Load anime by genre
-async function loadAnimeByGenre(slug, genreName) {
+async function loadAnimeByGenre(slug, genreName, page = 1) {
     const genresContent = document.getElementById("genresContent");
 
     genresContent.innerHTML =
         '<div class="loading"><div class="spinner"></div></div>';
 
     try {
-        const data = await fetchAnimeByGenre(slug);
+        const data = await fetchAnimeByGenre(slug, page);
 
         genresContent.innerHTML = "";
 
-        if (data.data && data.data.length > 0) {
+        const animeList = data.data?.animeList || [];
+        if (animeList.length > 0) {
             const backButton = document.createElement("button");
             backButton.className = "watch-btn";
             backButton.style.marginBottom = "1.5rem";
@@ -708,7 +715,7 @@ async function loadAnimeByGenre(slug, genreName) {
             const animeGrid = document.createElement("div");
             animeGrid.className = "anime-grid";
 
-            data.data.forEach(anime => {
+            animeList.forEach(anime => {
                 animeGrid.appendChild(createAnimeCardElement(anime));
             });
 
@@ -718,7 +725,13 @@ async function loadAnimeByGenre(slug, genreName) {
             if (data.pagination) {
                 const pagination = document.createElement("div");
                 pagination.className = "pagination";
-                createPagination(pagination, data.pagination, 1);
+                createGenrePagination(
+                    pagination,
+                    data.pagination,
+                    slug,
+                    genreName,
+                    page
+                );
                 genresContent.appendChild(pagination);
             }
         } else {
@@ -751,13 +764,11 @@ async function loadAnimeDetail(slug, title) {
 
     animeDetailSection.innerHTML =
         '<div class="loading"><div class="spinner"></div></div>';
-    console.log("slug:", slug);
     try {
         const data = await fetchAnimeDetail(slug);
 
         if (data.data) {
             const anime = data.data;
-            console.log(anime);
             currentAnimeSlug = slug;
 
             // Create anime detail HTML
@@ -777,13 +788,13 @@ async function loadAnimeDetail(slug, title) {
                                     ${anime.duration ? `<span class="meta-item">${anime.duration}</span>` : ""}
                                 </div>
                                 ${
-                                    anime.genres
+                                    anime.genreList
                                         ? `
                                     <div class="genre-list">
                                         ${anime.genreList
                                             .map(
                                                 genre => `
-                                            <span class="genre-tag">${genre}</span>
+                                            <span class="genre-tag">${genre.title || "Tidak ada genre"}</span>
                                         `
                                             )
                                             .join("")}
@@ -851,13 +862,101 @@ async function loadAnimeDetail(slug, title) {
                         <i class="fas fa-exclamation-circle"></i>
                         <h3>Gagal memuat detail anime</h3>
                         <p>Silakan coba lagi nanti</p>
-                        <button class="watch-btn" id="homeBtn" onclick="showHomePage()" style="margin-top: 1rem; width: auto;">Kembali ke Beranda</button>
+                        <button class="watch-btn" onclick="showHomePage()" style="margin-top: 1rem; width: auto;">Kembali ke Beranda</button>
                     </div>
                 `;
     }
 }
 
 // Load episode
+async function loadEpisode1(slug, title) {
+    videoModal.style.display = "flex";
+    videoTitle.textContent = title || "Memuat...";
+    videoDescription.textContent = "Memuat video...";
+    episodeSelector.innerHTML = "";
+
+    try {
+        const data = await fetchEpisode(slug);
+
+        if (data.data) {
+            const episode = data.data;
+            const server = await fetchServer(
+                episode.server.qualities[2].serverList[0].serverId ||
+                    episode.server.qualities[1].serverList[0].serverId
+            );
+
+            const stream = server.data.url;
+            // Update video player
+            if (server.data) {
+                videoPlayer.innerHTML = `
+                            <iframe 
+                                src="${stream}" 
+                                frameborder="0" 
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                allowfullscreen>
+                            </iframe>
+                        `;
+            } else {
+                videoPlayer.innerHTML = `
+                            <div style="display: flex; justify-content: center; align-items: center; height: 100%; color: white;">
+                                <div>
+                                    <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                                    <h3>Video tidak tersedia</h3>
+                                    <p>Link streaming tidak ditemukan</p>
+                                </div>
+                            </div>
+                        `;
+            }
+
+            videoTitle.textContent = title || episode.title || "Episode";
+            videoDescription.textContent =
+                episode.description || "Tidak ada deskripsi tersedia";
+
+            // Create episode selector if we have multiple episodes
+            if (currentEpisodes && currentEpisodes.length > 0) {
+                episodeSelector.innerHTML = "";
+                currentEpisodes.forEach(ep => {
+                    const episodeBtn = document.createElement("button");
+                    episodeBtn.className = "episode-btn";
+                    if (ep.episodeId === slug)
+                        episodeBtn.classList.add("active");
+                    episodeBtn.textContent = `Ep ${ep.eps}`;
+                    episodeBtn.dataset.slug = ep.episodeId;
+                    episodeBtn.dataset.title = ep.title || `Episode ${ep.eps}`;
+                    episodeBtn.addEventListener("click", () => {
+                        loadEpisode(
+                            ep.episodeId,
+                            ep.title || `Episode ${ep.number}`
+                        );
+                    });
+                    episodeSelector.appendChild(episodeBtn);
+                });
+            }
+        } else {
+            videoPlayer.innerHTML = `
+                        <div style="display: flex; justify-content: center; align-items: center; height: 100%; color: white;">
+                            <div>
+                                <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                                <h3>Gagal memuat episode</h3>
+                                <p>Data episode tidak ditemukan</p>
+                            </div>
+                        </div>
+                    `;
+        }
+    } catch (error) {
+        console.error("Error loading episode:", error);
+        videoPlayer.innerHTML = `
+                    <div style="display: flex; justify-content: center; align-items: center; height: 100%; color: white;">
+                        <div>
+                            <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                            <h3>Gagal memuat episode</h3>
+                            <p>Silakan coba lagi nanti</p>
+                        </div>
+                    </div>
+                `;
+    }
+}
+
 async function loadEpisode(slug, title) {
     videoModal.style.display = "flex";
     videoTitle.textContent = title || "Memuat...";
@@ -1032,67 +1131,88 @@ async function performSearch() {
 // Helper Functions
 function createAnimeSection(title, animeList) {
     const section = document.createElement("section");
-    section.innerHTML = `
-                <div class="section-title">
-                    <h2>${title}</h2>
-                </div>
-                <div class="anime-grid">
-                    ${animeList
-                        .slice(0, 12)
-                        .map(anime => createAnimeCardHTML(anime))
-                        .join("")}
-                </div>
-            `;
+
+    const header = document.createElement("div");
+    header.className = "section-title";
+    header.innerHTML = `<h2>${title}</h2>`;
+
+    const grid = document.createElement("div");
+    grid.className = "anime-grid";
+
+    animeList.slice(0, 12).forEach(anime => {
+        const card = createAnimeCardElement(anime);
+        grid.appendChild(card);
+    });
+
+    section.appendChild(header);
+    section.appendChild(grid);
+
     return section;
 }
 function getAnimeSlug(anime) {
-    return (
-        anime.animeId ||
-        anime.slug ||
-        anime.href?.split("/").filter(Boolean).pop() ||
-        anime.synopsis?.connections?.[0]?.animeId ||
-        null
-    );
+    const slug =
+        anime?.animeId ||
+        anime?.slug ||
+        anime?.href?.split("/").filter(Boolean).pop() ||
+        anime?.link?.split("/").filter(Boolean).pop() ||
+        anime?.synopsis?.connections?.[0]?.animeId ||
+        null;
+
+    if (!slug) {
+        console.warn("Anime tanpa slug:", anime);
+    }
+
+    return slug;
 }
 function createAnimeCardElement(anime) {
     const slug = getAnimeSlug(anime);
-    const card = document.createElement("div");
 
+    if (!slug) return document.createElement("div");
+
+    const card = document.createElement("div");
     card.className = "anime-card";
     card.dataset.slug = slug;
+    card.innerHTML = createAnimeCardHTML(anime, slug);
 
-    card.innerHTML = createAnimeCardHTML(anime);
     return card;
 }
 
-function createAnimeCardHTML(anime) {
+function createAnimeCardHTML(anime, slug) {
     const title = anime.title || "Judul Tidak Tersedia";
-    console.log("anime:", anime);
     const poster =
         anime.poster ||
         "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80";
+
     const type = anime.type || "TV";
     const score = anime.score || "N/A";
     const episodes = anime.episodes || "?";
-    const id = anime.animeId || "?";
+
     return `
-                <img src="${poster}" alt="${title}" class="anime-poster" 
-                     onerror="this.src='https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'">
-                <div class="anime-info">
-                    <h3 class="anime-title">${title}</h3>
-                    <div class="anime-meta">
-                        <span>${anime.year || ""}</span>
-                        <span class="anime-rating"><i class="fas fa-star"></i> ${score}</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                        <span class="anime-type">${type}</span>
-                        <span>${episodes} eps</span>
-                    </div>
-                    <button class="watch-btn" data-slug="${id}" data-title="${title}">
-                        <i class="fas fa-play"></i> Tonton
-                    </button>
-                </div>
-            `;
+        <img src="${poster}" alt="${title}" class="anime-poster"
+             onerror="this.src='https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'">
+
+        <div class="anime-info">
+            <h3 class="anime-title">${title}</h3>
+
+            <div class="anime-meta">
+                <span>${anime.year || ""}</span>
+                <span class="anime-rating">
+                    <i class="fas fa-star"></i> ${score}
+                </span>
+            </div>
+
+            <div style="display:flex;justify-content:space-between;margin-bottom:10px;">
+                <span class="anime-type">${type}</span>
+                <span>${episodes} eps</span>
+            </div>
+
+            <button class="watch-btn"
+                data-slug="${slug || ""}"
+                data-title="${title}">
+                <i class="fas fa-play"></i> Tonton
+            </button>
+        </div>
+    `;
 }
 
 function createPagination(container, pagination, currentPage) {
@@ -1125,5 +1245,41 @@ function createPagination(container, pagination, currentPage) {
     nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
     nextBtn.disabled = currentPage === pagination.totalPages;
     nextBtn.dataset.page = currentPage + 1;
+    container.appendChild(nextBtn);
+}
+
+function createGenrePagination(
+    container,
+    pagination,
+    slug,
+    genreName,
+    currentPage
+) {
+    container.innerHTML = "";
+
+    const prevBtn = document.createElement("button");
+    prevBtn.className = "page-btn";
+    prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+    prevBtn.disabled = currentPage === 1;
+    prevBtn.onclick = () => loadAnimeByGenre(slug, genreName, currentPage - 1);
+    container.appendChild(prevBtn);
+
+    const startPage = Math.max(1, currentPage - 2);
+    const endPage = Math.min(pagination.totalPages, currentPage + 2);
+
+    for (let i = startPage; i <= endPage; i++) {
+        const pageBtn = document.createElement("button");
+        pageBtn.className = "page-btn";
+        if (i === currentPage) pageBtn.classList.add("active");
+        pageBtn.textContent = i;
+        pageBtn.onclick = () => loadAnimeByGenre(slug, genreName, i);
+        container.appendChild(pageBtn);
+    }
+
+    const nextBtn = document.createElement("button");
+    nextBtn.className = "page-btn";
+    nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+    nextBtn.disabled = currentPage === pagination.totalPages;
+    nextBtn.onclick = () => loadAnimeByGenre(slug, genreName, currentPage + 1);
     container.appendChild(nextBtn);
 }

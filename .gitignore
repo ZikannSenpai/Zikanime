@@ -1,6 +1,7 @@
 node_modules/
 backup
 public/index.html.backup
+public/script.js.backup
 tes.js
 temp/
 debug.js
