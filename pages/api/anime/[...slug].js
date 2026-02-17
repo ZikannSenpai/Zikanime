@@ -92,6 +92,7 @@ export default async function handler(req, res) {
         // return with same status code from upstream (or 200)
         res.setHeader("content-type", "application/json");
         res.status(r.status || 200).json(transformed);
+        console.log(r.data);
     } catch (err) {
         console.error("Proxy error:", err);
         res.status(500).json({
