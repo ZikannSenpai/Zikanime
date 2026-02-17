@@ -788,7 +788,7 @@ async function loadAnimeDetail(slug, title) {
                                         ${anime.genreList
                                             .map(
                                                 genre => `
-                                            <span class="genre-tag">${genre.title}</span>
+                                            <span class="genre-tag">${genre.title || "Tidak ada genre"}</span>
                                         `
                                             )
                                             .join("")}
