@@ -274,6 +274,16 @@ function hideAllSections() {
 }
 
 // API Functions
+async function fetchServer(slug) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/anime/server/${slug}`);
+        if (!response.ok) throw new Error("Network response was not ok");
+        return await response.json();
+    } catch (error) {
+        console.error("Error fetching home data:", error);
+        throw error;
+    }
+}
 async function fetchHomeData() {
     try {
         const response = await fetch(`${API_BASE_URL}/anime/home`);
@@ -856,13 +866,19 @@ async function loadEpisode(slug, title) {
         const data = await fetchEpisode(slug);
 
         if (data.data) {
-            const episode = data.data;
+            const episode = data.data.data;
 
+            const server = await fetchEpisode(
+                episode.server.qualities[2].serverList[0].serverId ||
+                    episode.server.qualities[1].serverList[0].serverId
+            );
+
+            const stream = server.data.data.url;
             // Update video player
-            if (episode.defaultStreamingUrl) {
+            if (server.data.ok) {
                 videoPlayer.innerHTML = `
                             <iframe 
-                                src="${episode.defaultStreamingUrl}" 
+                                src="${stream}" 
                                 frameborder="0" 
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                                 allowfullscreen>
@@ -954,7 +970,11 @@ async function performSearch() {
 
         if (data.data && data.data.length > 0) {
             // Filter anime based on search query
-            const filteredAnime = data.data.filter(anime => {
+
+            const allList = data.data.data.list.flatMap(
+                group => group.animeList || []
+            );
+            const filteredAnime = allList.filter(anime => {
                 return (
                     anime.title &&
                     anime.title.toLowerCase().includes(query.toLowerCase())
