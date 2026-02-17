@@ -832,6 +832,7 @@ async function loadAnimeDetail(slug, title) {
 
                 // Store episodes for later use
                 currentEpisodes = anime.episodeList;
+                console.log("currentEpisodes:", currentEpisodes);
             }
         } else {
             animeDetailSection.innerHTML = `
