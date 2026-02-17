@@ -751,7 +751,7 @@ async function loadAnimeDetail(slug, title) {
 
     animeDetailSection.innerHTML =
         '<div class="loading"><div class="spinner"></div></div>';
-
+    console.log("slug:", slug);
     try {
         const data = await fetchAnimeDetail(slug);
 
@@ -871,8 +871,8 @@ async function loadEpisode(slug, title) {
             const episode = data.data;
             console.log("episode:", episode);
             const server = await fetchServer(
-                episode.server.qualities[2].serverList[1].serverId ||
-                    episode.server.qualities[1].serverList[1].serverId
+                episode.server.qualities[2].serverList[0].serverId ||
+                    episode.server.qualities[1].serverList[0].serverId
             );
 
             const stream = server.data.url;
