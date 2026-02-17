@@ -397,7 +397,7 @@ async function loadHomeData() {
     try {
         const data = await fetchHomeData();
         // Clear previous content
-        console.log(data.data);
+        
         homeContent.innerHTML = "";
 
         // Process and display home data
@@ -406,7 +406,7 @@ async function loadHomeData() {
             // Display trending anime
             const ongoing = data.data.ongoing?.animeList || [];
             const completed = data.data.completed?.animeList || [];
-
+            console.log('ongoing:', ongoing);
             homeContent.innerHTML = "";
 
             if (ongoing.length > 0) {
