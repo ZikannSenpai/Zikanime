@@ -646,12 +646,12 @@ async function loadGenres() {
             genresList.className = "genre-list";
             genresList.style.marginBottom = "2rem";
 
-            data.data.forEach(genre => {
+            data.data.genreList.forEach(genre => {
                 const genreTag = document.createElement("span");
                 genreTag.className = "genre-tag";
-                genreTag.textContent = genre.name || genre;
+                genreTag.textContent = genre.title || genre;
                 genreTag.dataset.slug =
-                    genre.slug || genre.toLowerCase().replace(/ /g, "-");
+                    genre.genreId || genre.toLowerCase().replace(/ /g, "-");
                 genreTag.style.cursor = "pointer";
                 genresList.appendChild(genreTag);
             });
@@ -782,7 +782,7 @@ async function loadAnimeDetail(slug, title) {
                                     ${anime.duration ? `<span class="meta-item">${anime.duration}</span>` : ""}
                                 </div>
                                 ${
-                                    anime.genres
+                                    anime.genreList
                                         ? `
                                     <div class="genre-list">
                                         ${anime.genreList
