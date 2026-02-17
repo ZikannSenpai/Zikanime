@@ -872,7 +872,7 @@ async function loadEpisode(slug, title) {
                     episode.server.qualities[1].serverList[0].serverId
             );
 
-            const stream = server.data.data.url;
+            const stream = server.data.url;
             // Update video player
             if (server.data) {
                 videoPlayer.innerHTML = `
