@@ -762,8 +762,6 @@ async function loadAnimeDetail(slug, title) {
 
         if (data.data) {
             const anime = data.data;
-            console.log("anime:", anime);
-
             currentAnimeSlug = slug;
 
             // Create anime detail HTML
@@ -789,7 +787,7 @@ async function loadAnimeDetail(slug, title) {
                                         ${anime.genreList
                                             .map(
                                                 genre => `
-                                            <span class="genre-tag">${genre}</span>
+                                            <span class="genre-tag">${genre.title}</span>
                                         `
                                             )
                                             .join("")}
