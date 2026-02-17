@@ -785,9 +785,11 @@ async function loadAnimeDetail(slug, title) {
                                     ${anime.status ? `<span class="meta-item">${anime.status}</span>` : ""}
                                     ${anime.score ? `<span class="meta-item"><i class="fas fa-star" style="color: #ffc107;"></i> ${anime.score}</span>` : ""}
                                     ${anime.episodes ? `<span class="meta-item">${anime.episodes} Episode</span>` : ""}
-                                    ${anime.duration ? `<span class="meta-item">${anime.duration}</span>` : ""}${
-                                        anime.genreList
-                                            ? `
+                                    ${anime.duration ? `<span class="meta-item">${anime.duration}</span>` : ""}
+                                </div>
+                                ${
+                                    anime.genreList
+                                        ? `
     <div class="genre-list">
       ${anime.genreList
           .map(genre => {
@@ -805,9 +807,9 @@ async function loadAnimeDetail(slug, title) {
           .join("")}
     </div>
   `
-                                            : ""
-                                    }
-                                </div>
+                                        : ""
+                                }
+                                
                                 ${
                                     anime.synopsis
                                         ? `
