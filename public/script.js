@@ -865,7 +865,8 @@ async function loadEpisode(slug, title) {
 
     try {
         const data = await fetchEpisode(slug);
-
+        const detailStream = await fetchAnimeDetail(slug);
+        console.log(detailStream.data);
         if (data.data) {
             const episode = data.data;
             const server = await fetchServer(
