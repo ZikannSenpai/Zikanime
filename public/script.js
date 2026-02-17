@@ -323,6 +323,17 @@ async function fetchAllAnime() {
     }
 }
 
+async function fetchSearchAnime(key) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/anime/search/${key}`);
+        if (!response.ok) throw new Error("Network response was not ok");
+        return await response.json();
+    } catch (error) {
+        console.error("Error fetching search anime:", error);
+        throw error;
+    }
+}
+
 async function fetchAnimeDetail(slug) {
     try {
         const response = await fetch(`${API_BASE_URL}/anime/anime/${slug}`);
@@ -1072,7 +1083,7 @@ async function performSearch() {
 
     try {
         // Fetch all anime first, then filter
-        const data = await fetchAllAnime();
+        const data = await fetchSearchAnime(query);
         console.log(data.data);
         searchResults.innerHTML = "";
 
