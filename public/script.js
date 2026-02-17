@@ -371,9 +371,11 @@ async function fetchGenres() {
     }
 }
 
-async function fetchAnimeByGenre(slug) {
+async function fetchAnimeByGenre(slug, page = 1) {
     try {
-        const response = await fetch(`${API_BASE_URL}/anime/genre/${slug}`);
+        const response = await fetch(
+            `${API_BASE_URL}/anime/genre/${slug}?page=${page}`
+        );
         if (!response.ok) throw new Error("Network response was not ok");
         return await response.json();
     } catch (error) {
@@ -685,18 +687,19 @@ async function loadGenres() {
 }
 
 // Load anime by genre
-async function loadAnimeByGenre(slug, genreName) {
+async function loadAnimeByGenre(slug, genreName, page = 1) {
     const genresContent = document.getElementById("genresContent");
 
     genresContent.innerHTML =
         '<div class="loading"><div class="spinner"></div></div>';
 
     try {
-        const data = await fetchAnimeByGenre(slug);
+        const data = await fetchAnimeByGenre(slug, page);
 
         genresContent.innerHTML = "";
 
-        if (data.data && data.data.length > 0) {
+        const animeList = data.data?.animeList || [];
+        if (animeList.length > 0) {
             const backButton = document.createElement("button");
             backButton.className = "watch-btn";
             backButton.style.marginBottom = "1.5rem";
@@ -714,7 +717,7 @@ async function loadAnimeByGenre(slug, genreName) {
             const animeGrid = document.createElement("div");
             animeGrid.className = "anime-grid";
 
-            data.data.forEach(anime => {
+            animeList.forEach(anime => {
                 animeGrid.appendChild(createAnimeCardElement(anime));
             });
 
@@ -724,7 +727,7 @@ async function loadAnimeByGenre(slug, genreName) {
             if (data.pagination) {
                 const pagination = document.createElement("div");
                 pagination.className = "pagination";
-                createPagination(pagination, data.pagination, 1);
+                createGenrePagination(pagination, data.pagination, 1);
                 genresContent.appendChild(pagination);
             }
         } else {
@@ -1239,5 +1242,41 @@ function createPagination(container, pagination, currentPage) {
     nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
     nextBtn.disabled = currentPage === pagination.totalPages;
     nextBtn.dataset.page = currentPage + 1;
+    container.appendChild(nextBtn);
+}
+
+function createGenrePagination(
+    container,
+    pagination,
+    slug,
+    genreName,
+    currentPage
+) {
+    container.innerHTML = "";
+
+    const prevBtn = document.createElement("button");
+    prevBtn.className = "page-btn";
+    prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+    prevBtn.disabled = currentPage === 1;
+    prevBtn.onclick = () => loadAnimeByGenre(slug, genreName, currentPage - 1);
+    container.appendChild(prevBtn);
+
+    const startPage = Math.max(1, currentPage - 2);
+    const endPage = Math.min(pagination.totalPages, currentPage + 2);
+
+    for (let i = startPage; i <= endPage; i++) {
+        const pageBtn = document.createElement("button");
+        pageBtn.className = "page-btn";
+        if (i === currentPage) pageBtn.classList.add("active");
+        pageBtn.textContent = i;
+        pageBtn.onclick = () => loadAnimeByGenre(slug, genreName, i);
+        container.appendChild(pageBtn);
+    }
+
+    const nextBtn = document.createElement("button");
+    nextBtn.className = "page-btn";
+    nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+    nextBtn.disabled = currentPage === pagination.totalPages;
+    nextBtn.onclick = () => loadAnimeByGenre(slug, genreName, currentPage + 1);
     container.appendChild(nextBtn);
 }
