@@ -801,8 +801,7 @@ async function loadAnimeDetail(slug, title) {
             <span class="genre-tag"
               data-slug="${slug}">
               ${genre.title}
-            </span>
-          `;
+            </span>`;
           })
           .join("")}
     </div>
@@ -854,6 +853,7 @@ async function loadAnimeDetail(slug, title) {
                 // Store episodes for later use
                 currentEpisodes = anime.episodeList;
             }
+            setTimeout(setupScrollEffects, 100);
         } else {
             animeDetailSection.innerHTML = `
                         <div class="error-message">
@@ -1109,6 +1109,7 @@ async function performSearch() {
                         `;
             }
         } else {
+            console.error("error: ");
             searchResults.innerHTML = `
                         <div class="error-message">
                             <i class="fas fa-exclamation-circle"></i>
