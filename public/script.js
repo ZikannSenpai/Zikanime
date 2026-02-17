@@ -866,9 +866,7 @@ async function loadEpisode(slug, title) {
         const data = await fetchEpisode(slug);
 
         if (data.data) {
-            const episode = data.data.data;
-            console.log(episode);
-            console.log(data);
+            const episode = data.data;
             const server = await fetchServer(
                 episode.server.qualities[2].serverList[0].serverId ||
                     episode.server.qualities[1].serverList[0].serverId
