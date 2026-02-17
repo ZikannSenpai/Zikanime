@@ -762,6 +762,7 @@ async function loadAnimeDetail(slug, title) {
 
         if (data.data) {
             const anime = data.data;
+            console.log(anime);
             currentAnimeSlug = slug;
 
             // Create anime detail HTML
