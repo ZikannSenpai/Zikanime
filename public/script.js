@@ -834,7 +834,6 @@ async function loadAnimeDetail(slug, title) {
 
                 // Store episodes for later use
                 currentEpisodes = anime.episodeList;
-                console.log("currentEpisodes:", currentEpisodes);
             }
         } else {
             animeDetailSection.innerHTML = `
@@ -867,7 +866,6 @@ async function loadEpisode(slug, title) {
 
     try {
         const data = await fetchEpisode(slug);
-        const detailStream = await fetchAnimeDetail(slug);
 
         if (data.data) {
             const episode = data.data;
