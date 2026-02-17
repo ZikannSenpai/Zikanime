@@ -840,7 +840,7 @@ async function loadAnimeDetail(slug, title) {
                         <div class="error-message">
                             <i class="fas fa-exclamation-circle"></i>
                             <h3>Gagal memuat detail anime</h3>
-                            <button class="watch-btn" id ="homeBtn" onclick="showHomePage()" style="margin-top: 1rem; width: auto;">Kembali ke Beranda</button>
+                            <button class="watch-btn" onclick="showHomePage()" style="margin-top: 1rem; width: auto;">Kembali ke Beranda</button>
                         </div>
                     `;
         }
@@ -1045,12 +1045,21 @@ function createAnimeSection(title, animeList) {
             `;
     return section;
 }
-
+function getAnimeSlug(anime) {
+    return (
+        anime.animeId ||
+        anime.slug ||
+        anime.href?.split("/").filter(Boolean).pop() ||
+        anime.synopsis?.connections?.[0]?.animeId ||
+        null
+    );
+}
 function createAnimeCardElement(anime) {
+    const slug = getAnimeSlug(anime);
     const card = document.createElement("div");
-    console.log(anime);
+
     card.className = "anime-card";
-    card.dataset.slug = anime.animeId || anime.synopsis.connections[0].animeId;
+    card.dataset.slug = slug;
 
     card.innerHTML = createAnimeCardHTML(anime);
     return card;
