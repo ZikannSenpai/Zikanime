@@ -868,14 +868,14 @@ async function loadEpisode(slug, title) {
         if (data.data) {
             const episode = data.data.data;
 
-            const server = await fetchEpisode(
+            const server = await fetchServer(
                 episode.server.qualities[2].serverList[0].serverId ||
                     episode.server.qualities[1].serverList[0].serverId
             );
 
             const stream = server.data.data.url;
             // Update video player
-            if (server.data.ok) {
+            if (server.data) {
                 videoPlayer.innerHTML = `
                             <iframe 
                                 src="${stream}" 
@@ -991,7 +991,7 @@ async function performSearch() {
 
                 searchResults.appendChild(animeGrid);
             } else {
-              console.error("eror");
+                console.error("eror");
                 searchResults.innerHTML = `
                             <div class="error-message">
                                 <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 1rem; color: var(--text-secondary);"></i>
@@ -999,7 +999,6 @@ async function performSearch() {
                                 <p>Coba dengan kata kunci lain</p>
                             </div>
                         `;
-                        
             }
         } else {
             searchResults.innerHTML = `
