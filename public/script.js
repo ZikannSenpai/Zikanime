@@ -280,7 +280,7 @@ async function fetchServer(slug) {
         if (!response.ok) throw new Error("Network response was not ok");
         return await response.json();
     } catch (error) {
-        console.error("Error fetching home data:", error);
+        console.error("Error fetching server data:", error);
         throw error;
     }
 }
