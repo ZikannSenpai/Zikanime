@@ -754,17 +754,19 @@ async function loadAnimeByGenre(slug, genreName) {
 // Load anime detail
 async function loadAnimeDetail(slug, title) {
     showAnimeDetailPage();
-    console.log("sluvg ", slug);
 
     animeDetailSection.innerHTML =
         '<div class="loading"><div class="spinner"></div></div>';
-    console.log("slug:", slug);
     try {
         const data = await fetchAnimeDetail(slug);
 
         if (data.data) {
             const anime = data.data;
-            console.log(anime);
+
+            const epWatch = anime.episodeList[0].episodeId;
+            const ep1 = await fetchEpisode(ep1);
+            console.log(ep1.data);
+
             currentAnimeSlug = slug;
 
             // Create anime detail HTML
