@@ -754,6 +754,7 @@ async function loadAnimeByGenre(slug, genreName) {
 // Load anime detail
 async function loadAnimeDetail(slug, title) {
     showAnimeDetailPage();
+    console.log("sluvg ", slug);
 
     animeDetailSection.innerHTML =
         '<div class="loading"><div class="spinner"></div></div>';
@@ -857,7 +858,7 @@ async function loadAnimeDetail(slug, title) {
                         <i class="fas fa-exclamation-circle"></i>
                         <h3>Gagal memuat detail anime</h3>
                         <p>Silakan coba lagi nanti</p>
-                        <button class="watch-btn" id="homeBtn" onclick="showHomePage()" style="margin-top: 1rem; width: auto;">Kembali ke Beranda</button>
+                        <button class="watch-btn" onclick="showHomePage()" style="margin-top: 1rem; width: auto;">Kembali ke Beranda</button>
                     </div>
                 `;
     }
