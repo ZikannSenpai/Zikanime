@@ -1073,7 +1073,7 @@ async function performSearch() {
     try {
         // Fetch all anime first, then filter
         const data = await fetchAllAnime();
-
+        console.log(data.data);
         searchResults.innerHTML = "";
 
         if (data.data && data.data.length > 0) {
