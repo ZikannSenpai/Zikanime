@@ -397,7 +397,7 @@ async function loadHomeData() {
     try {
         const data = await fetchHomeData();
         // Clear previous content
-        
+
         homeContent.innerHTML = "";
 
         // Process and display home data
@@ -406,7 +406,7 @@ async function loadHomeData() {
             // Display trending anime
             const ongoing = data.data.ongoing?.animeList || [];
             const completed = data.data.completed?.animeList || [];
-            console.log('ongoing:', ongoing);
+            console.log("ongoing:", ongoing);
             homeContent.innerHTML = "";
 
             if (ongoing.length > 0) {
@@ -780,7 +780,7 @@ async function loadAnimeDetail(slug, title) {
                                     anime.genres
                                         ? `
                                     <div class="genre-list">
-                                        ${anime.genres
+                                        ${anime.genreList
                                             .map(
                                                 genre => `
                                             <span class="genre-tag">${genre}</span>
