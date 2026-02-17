@@ -324,10 +324,8 @@ async function fetchAllAnime() {
 }
 
 async function fetchAnimeDetail(slug) {
-    console.log("slug:", slug);
     try {
         const response = await fetch(`${API_BASE_URL}/anime/anime/${slug}`);
-        console.log(response);
         if (!response.ok) throw new Error("Network response was not ok");
         return await response.json();
     } catch (error) {
@@ -652,8 +650,8 @@ async function loadGenres() {
                 const genreTag = document.createElement("span");
                 genreTag.className = "genre-tag";
                 genreTag.textContent = genre.title || genre;
-                genreTag.dataset.slug =
-                    genre.genreId || genre.toLowerCase().replace(/ /g, "-");
+                genreTag.dataset.slug = genre.genreId;
+                console.log(genreTag.dataset);
                 genreTag.style.cursor = "pointer";
                 genresList.appendChild(genreTag);
             });
@@ -765,7 +763,6 @@ async function loadAnimeDetail(slug, title) {
 
         if (data.data) {
             const anime = data.data;
-            console.log(anime);
             currentAnimeSlug = slug;
 
             // Create anime detail HTML
