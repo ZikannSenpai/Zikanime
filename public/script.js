@@ -1086,11 +1086,13 @@ async function performSearch() {
         const data = await fetchSearchAnime(query);
         console.log(data.data);
         searchResults.innerHTML = "";
-        const resultList = data.data.animeList;
-        if (resultList > 0) {
+        const resultList = data.data.data.animeList;
+        if (resultList.length > 0) {
             // Filter anime based on search query
 
-            const allList = data.data.animeList.flatMap(group => group || []);
+            const allList = data.data.data.animeList.flatMap(
+                group => group || []
+            );
             const filteredAnime = allList.filter(anime => {
                 return (
                     anime.title &&
