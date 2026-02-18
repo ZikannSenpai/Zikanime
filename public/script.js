@@ -3,6 +3,8 @@ const API_BASE_URL = "/api";
 
 // State aplikasi
 let currentPage = 1;
+let ongoingPage = 1;
+let completePage = 1;
 let currentAnimeSlug = "";
 let currentEpisodes = [];
 
@@ -179,12 +181,12 @@ function setupEventListeners() {
 
             if (!page) return;
 
-            currentPage = page;
-
             if (type === "ongoing") {
-                loadOngoingAnime(page);
+              ongoingPage = page
+                loadOngoingAnime(ongoingPage);
             } else if (type === "complete") {
-                loadCompleteAnime(page);
+              completePage = page
+                loadCompleteAnime(completePage);
             }
         }
     });
@@ -251,14 +253,14 @@ function showHomePage() {
 function showOngoingPage() {
     hideAllSections();
     ongoingSection.style.display = "block";
-    loadOngoingAnime(1);
+    loadOngoingAnime(ongoingPage);
     window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 function showCompletePage() {
     hideAllSections();
     completeSection.style.display = "block";
-    loadCompleteAnime(1);
+    loadCompleteAnime(completePage);
     window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
