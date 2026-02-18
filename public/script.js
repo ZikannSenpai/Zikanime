@@ -492,7 +492,7 @@ async function loadOngoingAnime() {
         const data = await fetchOngoingAnime();
 
         ongoingContent.innerHTML = "";
-
+        console.log(data);
         if (data.data && data.data.length > 0) {
             const animeGrid = document.createElement("div");
             animeGrid.className = "anime-grid";
@@ -904,94 +904,6 @@ async function loadAnimeDetail(slug, title) {
 }
 
 // Load episode
-async function loadEpisode1(slug, title) {
-    videoModal.style.display = "flex";
-    videoTitle.textContent = title || "Memuat...";
-    videoDescription.textContent = "Memuat video...";
-    episodeSelector.innerHTML = "";
-
-    try {
-        const data = await fetchEpisode(slug);
-
-        if (data.data) {
-            const episode = data.data;
-            const server = await fetchServer(
-                episode.server.qualities[2].serverList[0].serverId ||
-                    episode.server.qualities[1].serverList[0].serverId
-            );
-
-            const stream = server.data.url;
-            // Update video player
-            if (server.data) {
-                videoPlayer.innerHTML = `
-                            <iframe 
-                                src="${stream}" 
-                                frameborder="0" 
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                                allowfullscreen>
-                            </iframe>
-                        `;
-            } else {
-                videoPlayer.innerHTML = `
-                            <div style="display: flex; justify-content: center; align-items: center; height: 100%; color: white;">
-                                <div>
-                                    <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem;"></i>
-                                    <h3>Video tidak tersedia</h3>
-                                    <p>Link streaming tidak ditemukan</p>
-                                </div>
-                            </div>
-                        `;
-            }
-
-            videoTitle.textContent = title || episode.title || "Episode";
-            videoDescription.textContent =
-                episode.description || "Tidak ada deskripsi tersedia";
-
-            // Create episode selector if we have multiple episodes
-            if (currentEpisodes && currentEpisodes.length > 0) {
-                episodeSelector.innerHTML = "";
-                currentEpisodes.forEach(ep => {
-                    const episodeBtn = document.createElement("button");
-                    episodeBtn.className = "episode-btn";
-                    if (ep.episodeId === slug)
-                        episodeBtn.classList.add("active");
-                    episodeBtn.textContent = `Ep ${ep.eps}`;
-                    episodeBtn.dataset.slug = ep.episodeId;
-                    episodeBtn.dataset.title = ep.title || `Episode ${ep.eps}`;
-                    episodeBtn.addEventListener("click", () => {
-                        loadEpisode(
-                            ep.episodeId,
-                            ep.title || `Episode ${ep.number}`
-                        );
-                    });
-                    episodeSelector.appendChild(episodeBtn);
-                });
-            }
-        } else {
-            videoPlayer.innerHTML = `
-                        <div style="display: flex; justify-content: center; align-items: center; height: 100%; color: white;">
-                            <div>
-                                <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem;"></i>
-                                <h3>Gagal memuat episode</h3>
-                                <p>Data episode tidak ditemukan</p>
-                            </div>
-                        </div>
-                    `;
-        }
-    } catch (error) {
-        console.error("Error loading episode:", error);
-        videoPlayer.innerHTML = `
-                    <div style="display: flex; justify-content: center; align-items: center; height: 100%; color: white;">
-                        <div>
-                            <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem;"></i>
-                            <h3>Gagal memuat episode</h3>
-                            <p>Silakan coba lagi nanti</p>
-                        </div>
-                    </div>
-                `;
-    }
-}
-
 async function loadEpisode(slug, title) {
     videoModal.style.display = "flex";
     videoTitle.textContent = title || "Memuat...";
@@ -1003,7 +915,6 @@ async function loadEpisode(slug, title) {
 
         if (data.data) {
             const episode = data.data;
-            console.log("episode:", episode);
             const server = await fetchServer(
                 episode.server.qualities[2].serverList[0].serverId ||
                     episode.server.qualities[1].serverList[0].serverId
