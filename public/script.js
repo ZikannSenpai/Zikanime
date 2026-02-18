@@ -777,10 +777,13 @@ async function loadAnimeDetail(slug, title) {
         '<div class="loading"><div class="spinner"></div></div>';
     try {
         const data = await fetchAnimeDetail(slug);
-        console.log("sli", slug);
         if (data.data) {
             const anime = data.data;
-            console.log("anime:", anime);
+            
+            const eps1 = anime.episodeList.find(ep => ep.eps === 1);
+            console.log(eps1);
+            const epIdEp1 = await fetchEpisode(eps1.episodeId)
+            
             currentAnimeSlug = slug;
 
             // Create anime detail HTML
