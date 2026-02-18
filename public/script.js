@@ -503,7 +503,6 @@ async function loadOngoingAnime(page) {
 
     try {
         const data = await fetchOngoingAnime(page);
-        console.log("ONGOING PAGE:", page, data);
         ongoingContent.innerHTML = "";
         if (data.data && data.data.animeList.length > 0) {
             const animeGrid = document.createElement("div");
