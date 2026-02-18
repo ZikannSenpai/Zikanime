@@ -1086,7 +1086,8 @@ async function performSearch() {
         const data = await fetchSearchAnime(query);
         console.log(data.data);
         searchResults.innerHTML = "";
-        const resultList = data.data.data.animeList;
+        const resultList = data.data.animeList;
+        console.log(resultList);
         if (resultList.length > 0) {
             // Filter anime based on search query
 
