@@ -564,7 +564,7 @@ async function loadCompleteAnime(page) {
         const data = await fetchCompleteAnime(page);
 
         completeContent.innerHTML = "";
-
+        console.log(data);
         if (data.data && data.data.length > 0) {
             const animeGrid = document.createElement("div");
             animeGrid.className = "anime-grid";
