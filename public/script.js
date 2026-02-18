@@ -622,25 +622,35 @@ async function loadSchedule() {
 
     try {
         const data = await fetchSchedule();
-
         scheduleContent.innerHTML = "";
 
         if (data.data && Array.isArray(data.data)) {
             data.data.forEach(dayData => {
                 const { day, anime_list } = dayData;
 
-                if (anime_list && anime_list.length > 0) {
-                    const daySection = document.createElement("div");
-                    daySection.className = "schedule-day";
-                    daySection.innerHTML = `
-                        <h3 style="margin: 1.5rem 0 1rem 0; color: var(--accent-color);">${day}</h3>
-                        <div class="anime-grid" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));">
-                            ${anime_list.map(anime => createAnimeCardElement(anime)).join("")}
-                        </div>
-                    `;
+                if (!anime_list || anime_list.length === 0) return;
 
-                    scheduleContent.appendChild(daySection);
-                }
+                const daySection = document.createElement("div");
+                daySection.className = "schedule-day";
+
+                const title = document.createElement("h3");
+                title.textContent = day;
+                title.style.margin = "1.5rem 0 1rem 0";
+                title.style.color = "var(--accent-color)";
+
+                const grid = document.createElement("div");
+                grid.className = "anime-grid";
+                grid.style.gridTemplateColumns =
+                    "repeat(auto-fill, minmax(200px, 1fr))";
+
+                anime_list.forEach(anime => {
+                    const card = createAnimeCardElement(anime);
+                    grid.appendChild(card);
+                });
+
+                daySection.appendChild(title);
+                daySection.appendChild(grid);
+                scheduleContent.appendChild(daySection);
             });
         } else {
             scheduleContent.innerHTML = `
@@ -681,32 +691,30 @@ async function loadSchedule() {
 
 //         scheduleContent.innerHTML = "";
 
-//         if (data.data) {
-//             // Assuming data is organized by days
-//             const days = data.data.flatMap(day => day.day);
-//             days.forEach(day => {
-//                 console.log(data.data);
-//             });
-//             days.forEach(day => {
-//                 if (data.data[day] && data.data[day].length > 0) {
+//         if (data.data && Array.isArray(data.data)) {
+//             data.data.forEach(dayData => {
+//                 const { day, anime_list } = dayData;
+
+//                 if (anime_list && anime_list.length > 0) {
 //                     const daySection = document.createElement("div");
 //                     daySection.className = "schedule-day";
 //                     daySection.innerHTML = `
-//                                 <h3 style="margin: 1.5rem 0 1rem 0; color: var(--accent-color);">${day}</h3>
-//                                 <div class="anime-grid" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));">
-//                                     ${data.data[day].map(anime => createAnimeCardHTML(anime)).join("")}
-//                                 </div>
-//                             `;
+//                         <h3 style="margin: 1.5rem 0 1rem 0; color: var(--accent-color);">${day}</h3>
+//                         <div class="anime-grid" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));">
+//                             ${anime_list.map(anime => createAnimeCardHTML(anime)).join("")}
+//                         </div>
+//                     `;
+
 //                     scheduleContent.appendChild(daySection);
 //                 }
 //             });
 //         } else {
 //             scheduleContent.innerHTML = `
-//                         <div class="error-message">
-//                             <i class="fas fa-exclamation-circle"></i>
-//                             <h3>Tidak ada jadwal rilis</h3>
-//                         </div>
-//                     `;
+//                 <div class="error-message">
+//                     <i class="fas fa-exclamation-circle"></i>
+//                     <h3>Tidak ada jadwal rilis</h3>
+//                 </div>
+//             `;
 //         }
 
 //         scheduleLoading.style.display = "none";
@@ -716,12 +724,13 @@ async function loadSchedule() {
 //     } catch (error) {
 //         console.error("Error loading schedule:", error);
 //         scheduleContent.innerHTML = `
-//                     <div class="error-message">
-//                         <i class="fas fa-exclamation-circle"></i>
-//                         <h3>Gagal memuat jadwal</h3>
-//                         <p>Silakan coba lagi nanti</p>
-//                     </div>
-//                 `;
+//             <div class="error-message">
+//                 <i class="fas fa-exclamation-circle"></i>
+//                 <h3>Gagal memuat jadwal</h3>
+//                 <p>Silakan coba lagi nanti</p>
+//             </div>
+//         `;
+
 //         scheduleLoading.style.display = "none";
 //         scheduleContent.style.display = "block";
 //     }
@@ -739,7 +748,7 @@ async function loadGenres() {
         const data = await fetchGenres();
 
         genresContent.innerHTML = "";
-
+        console.log(data);
         if (data.data && data.data.length > 0) {
             const genresList = document.createElement("div");
             genresList.className = "genre-list";
