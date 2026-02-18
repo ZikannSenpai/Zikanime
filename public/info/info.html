@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Information | AnimeStream</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css"> <!-- CSS kamu -->
+</head>
+<body>
+
+<header>
+    <div class="header-container">
+        <div class="logo">
+            <i>▶</i>
+            Anime<span>Stream</span>
+        </div>
+
+        <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+
+        <nav id="mainNav">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="info.html" class="active">Information</a></li>
+            </ul>
+        </nav>
+
+        <div class="search-container" id="searchContainer">
+            <input type="text" class="search-box" placeholder="Cari anime...">
+            <button class="search-btn">Search</button>
+        </div>
+    </div>
+</header>
+
+<main class="container">
+
+    <section>
+        <div class="section-title">
+            <h2>Tentang Website</h2>
+        </div>
+
+        <div class="anime-card fade-in" style="padding: 2rem; cursor: default;">
+            <p class="anime-detail-synopsis">
+                AnimeStream adalah platform streaming anime berbasis web yang dirancang
+                untuk memberikan pengalaman menonton yang cepat, ringan, dan responsif.
+                Website ini berfokus pada kemudahan navigasi, tampilan modern, dan akses
+                episode yang terorganisir dengan rapi.
+            </p>
+        </div>
+    </section>
+
+    <section>
+        <div class="section-title">
+            <h2>Fitur Utama</h2>
+        </div>
+
+        <div class="anime-grid">
+            <div class="anime-card fade-in">
+                <div class="anime-info">
+                    <h3 class="anime-title">Streaming Cepat</h3>
+                    <p class="anime-detail-synopsis">
+                        Pemutar video terintegrasi dengan server pilihan untuk memastikan
+                        pemutaran yang stabil dan minim buffering.
+                    </p>
+                </div>
+            </div>
+
+            <div class="anime-card fade-in">
+                <div class="anime-info">
+                    <h3 class="anime-title">Daftar Episode Lengkap</h3>
+                    <p class="anime-detail-synopsis">
+                        Semua episode ditampilkan dalam grid yang rapi sehingga mudah
+                        diakses dari awal sampai episode terbaru.
+                    </p>
+                </div>
+            </div>
+
+            <div class="anime-card fade-in">
+                <div class="anime-info">
+                    <h3 class="anime-title">Pencarian Anime</h3>
+                    <p class="anime-detail-synopsis">
+                        Sistem pencarian memudahkan pengguna menemukan anime berdasarkan
+                        judul dengan cepat.
+                    </p>
+                </div>
+            </div>
+
+            <div class="anime-card fade-in">
+                <div class="anime-info">
+                    <h3 class="anime-title">Desain Responsif</h3>
+                    <p class="anime-detail-synopsis">
+                        Tampilan menyesuaikan berbagai ukuran layar, dari desktop sampai
+                        perangkat mobile.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="section-title">
+            <h2>FAQ</h2>
+        </div>
+
+        <div class="anime-card fade-in" style="padding: 2rem; cursor: default;">
+            <div class="anime-detail-synopsis">
+                <strong>Apakah website ini gratis?</strong><br>
+                Ya, semua fitur dapat diakses tanpa biaya.
+                <br><br>
+
+                <strong>Apakah perlu akun untuk menonton?</strong><br>
+                Tidak perlu. Pengguna bisa langsung streaming tanpa registrasi.
+                <br><br>
+
+                <strong>Kenapa video kadang lambat?</strong><br>
+                Kecepatan tergantung koneksi internet dan server yang digunakan.
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="section-title">
+            <h2>Disclaimer</h2>
+        </div>
+
+        <div class="anime-card fade-in" style="padding: 2rem; cursor: default;">
+            <p class="anime-detail-synopsis">
+                Semua konten yang tersedia di website ini berasal dari sumber pihak ketiga.
+                Website tidak menyimpan file video di server sendiri dan hanya bertindak
+                sebagai pengindeks konten.
+            </p>
+        </div>
+    </section>
+
+</main>
+
+<footer>
+    <div class="footer-content">
+        <div class="footer-logo">
+            Anime<span>Stream</span>
+        </div>
+
+        <p class="footer-description">
+            Platform streaming anime dengan tampilan modern, ringan, dan mudah digunakan.
+        </p>
+
+        <div class="copyright">
+            © 2026 AnimeStream. All rights reserved.
+        </div>
+    </div>
+</footer>
+
+<script>
+const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+const mainNav = document.getElementById("mainNav");
+const searchContainer = document.getElementById("searchContainer");
+
+mobileMenuBtn.addEventListener("click", () => {
+    mainNav.classList.toggle("active");
+    searchContainer.classList.toggle("active");
+});
+</script>
+
+</body>
+</html>

@@ -963,7 +963,7 @@ async function loadAnimeDetail(slug, title) {
 
                 // Store episodes for later use
                 currentEpisodes = anime.episodeList;
-            setTimeout(setupScrollEffects, 100);
+                setTimeout(setupScrollEffects, 100);
             }
             setTimeout(setupScrollEffects, 100);
         } else {
