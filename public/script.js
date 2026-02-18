@@ -781,9 +781,7 @@ async function loadAnimeDetail(slug, title) {
             const anime = data.data;
 
             const eps1 = anime.episodeList.find(ep => ep.eps === 1);
-            const epIdEp1 = await fetchEpisode(eps1.episodeId);
-            const serverEp1 = epIdEp1.data;
-            console.log(serverEp1);
+            const epIdEp1 = await loadEpisode1(eps1.episodeId, eps1.title);
 
             currentAnimeSlug = slug;
 
