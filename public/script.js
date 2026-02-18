@@ -923,7 +923,7 @@ async function loadAnimeDetail(slug, title) {
                                         ? `
                                     <div class="anime-detail-synopsis">
                                         <h3>Sinopsis</h3>
-                                        <p>${anime.synopsis.paragraphs[0]}</p>
+                                        <p>${anime.synopsis.paragraphs[0] || "Tidak ada sinopsis"}</p>
                                     </div>
                                 `
                                         : ""
