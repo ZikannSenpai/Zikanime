@@ -110,6 +110,18 @@ function setupEventListeners() {
 
     // Anime card click events (delegation)
     document.addEventListener("click", function (e) {
+        const watchEp1 = e.target.closest(".watch-ep1");
+        if (watchEp1) {
+            e.preventDefault();
+
+            const epSlug = watchEp1.dataset.ep;
+            const title = watchEp1.dataset.title;
+
+            if (epSlug) {
+                loadEpisode(epSlug, title);
+            }
+            return;
+        }
         const watchBtn = e.target.closest(".watch-btn");
         const card = e.target.closest(".anime-card");
 
@@ -781,8 +793,6 @@ async function loadAnimeDetail(slug, title) {
             const anime = data.data;
 
             const eps1 = anime.episodeList.find(ep => ep.eps === 1);
-            const epIdEp1 = await loadEpisode1(eps1.episodeId, eps1.title);
-
             currentAnimeSlug = slug;
 
             // Create anime detail HTML
@@ -833,9 +843,12 @@ async function loadAnimeDetail(slug, title) {
                                 `
                                         : ""
                                 }
-                                <button class="watch-btn" data-slug="${slug}" data-title="${anime.title || title}" style="width: auto; display: inline-block; margin-right: 1rem;">
-                                    <i class="fas fa-play"></i> Tonton Episode 1
-                                </button>
+                                <button class="watch-btn watch-ep1"
+    data-ep="${eps1?.episodeId || ""}"
+    data-title="${eps1?.title || ""}"
+    style="width:auto;display:inline-block;margin-right:1rem;">
+    <i class="fas fa-play"></i> Tonton Episode 1
+</button>
                                 <button class="watch-btn" onclick="showHomePage()" style="width: auto; display: inline-block; background-color: var(--secondary-color);">
                                     <i class="fas fa-arrow-left"></i> Kembali
                                 </button>
