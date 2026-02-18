@@ -175,8 +175,15 @@ function setupEventListeners() {
         const pageBtn = e.target.closest(".page-btn");
         if (pageBtn && !pageBtn.disabled) {
             const page = parseInt(pageBtn.dataset.page);
-            if (page) {
-                currentPage = page;
+            const type = pageBtn.dataset.type;
+
+            if (!page) return;
+
+            currentPage = page;
+
+            if (type === "ongoing") {
+                loadOngoingAnime(page);
+            } else if (type === "complete") {
                 loadCompleteAnime(page);
             }
         }
@@ -508,7 +515,12 @@ async function loadOngoingAnime(page) {
             ongoingContent.appendChild(animeGrid);
 
             if (data.pagination) {
-                createPagination(ongoingPagination, data.pagination, page);
+                createPagination(
+                    ongoingPagination,
+                    data.pagination,
+                    page,
+                    "ongoing"
+                );
                 ongoingPagination.style.display = "flex";
             }
         } else {
@@ -565,7 +577,12 @@ async function loadCompleteAnime(page) {
 
             // Create pagination
             if (data.pagination) {
-                createPagination(completePagination, data.pagination, page);
+                createPagination(
+                    completePagination,
+                    data.pagination,
+                    page,
+                    "complete"
+                );
                 completePagination.style.display = "flex";
             }
         } else {
@@ -1170,7 +1187,7 @@ function createAnimeCardHTML(anime, slug) {
     `;
 }
 
-function createPagination(container, pagination, currentPage) {
+function createPagination(container, pagination, currentPage, type) {
     container.innerHTML = "";
 
     // Previous button
@@ -1179,6 +1196,7 @@ function createPagination(container, pagination, currentPage) {
     prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
     prevBtn.disabled = currentPage === 1;
     prevBtn.dataset.page = currentPage - 1;
+    prevBtn.dataset.type = type;
     container.appendChild(prevBtn);
 
     // Page numbers
@@ -1191,6 +1209,7 @@ function createPagination(container, pagination, currentPage) {
         if (i === currentPage) pageBtn.classList.add("active");
         pageBtn.textContent = i;
         pageBtn.dataset.page = i;
+        pageBtn.dataset.type = type;
         container.appendChild(pageBtn);
     }
 
@@ -1200,6 +1219,7 @@ function createPagination(container, pagination, currentPage) {
     nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
     nextBtn.disabled = currentPage === pagination.totalPages;
     nextBtn.dataset.page = currentPage + 1;
+    nextBtn.dataset.type = type;
     container.appendChild(nextBtn);
 }
 
