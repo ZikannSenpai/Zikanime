@@ -1149,17 +1149,21 @@ function createAnimeCardElement(anime) {
     return card;
 }
 
-function createAnimeCardHTML(anime, slug) {
-    const title = anime.title || "Judul Tidak Tersedia";
-    const poster =
-        anime.poster ||
-        "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80";
+async function createAnimeCardHTML(anime, slug) {
+    try {
+        const title = anime.title || "Judul Tidak Tersedia";
+        const poster =
+            anime.poster ||
+            "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80";
 
-    const type = anime.type || "TV";
-    const score = anime.score || "N/A";
-    const episodes = anime.episodes || "?";
+        const type = anime.type || "TV";
+        const score = anime.score || "N/A";
+        if (!anime.episodes) {
+            const animes = await fetchAnimeDetail(anime.animeId);
 
-    return `
+            const episodes = animes.episodes || "?";
+        }
+        return `
         <img src="${poster}" alt="${title}" class="anime-poster"
              onerror="this.src='https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'">
 
@@ -1185,6 +1189,9 @@ function createAnimeCardHTML(anime, slug) {
             </button>
         </div>
     `;
+    } catch (err) {
+        console.error("Error:", err);
+    }
 }
 
 function createPagination(container, pagination, currentPage, type) {
