@@ -360,7 +360,7 @@ async function fetchAnimeDetail(slug) {
 async function fetchCompleteAnime(page) {
     try {
         const response = await fetch(
-            `${API_BASE_URL}/anime/complete-anime/${page}`
+            `${API_BASE_URL}/anime/complete-anime?page=${page}`
         );
         if (!response.ok) throw new Error("Network response was not ok");
         return await response.json();
@@ -370,9 +370,11 @@ async function fetchCompleteAnime(page) {
     }
 }
 
-async function fetchOngoingAnime() {
+async function fetchOngoingAnime(page) {
     try {
-        const response = await fetch(`${API_BASE_URL}/anime/ongoing-anime`);
+        const response = await fetch(
+            `${API_BASE_URL}/anime/ongoing-anime?page=${page}`
+        );
         if (!response.ok) throw new Error("Network response was not ok");
         return await response.json();
     } catch (error) {
@@ -491,7 +493,7 @@ async function loadOngoingAnime(page) {
     ongoingPagination.style.display = "none";
 
     try {
-        const data = await fetchOngoingAnime();
+        const data = await fetchOngoingAnime(page);
 
         ongoingContent.innerHTML = "";
         console.log(data);
