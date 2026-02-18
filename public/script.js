@@ -244,7 +244,7 @@ function showHomePage() {
 function showOngoingPage() {
     hideAllSections();
     ongoingSection.style.display = "block";
-    loadOngoingAnime();
+    loadOngoingAnime(1);
     window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -481,9 +481,10 @@ async function loadHomeData() {
 }
 
 // Load ongoing anime
-async function loadOngoingAnime() {
+async function loadOngoingAnime(page) {
     const ongoingLoading = document.getElementById("ongoingLoading");
     const ongoingContent = document.getElementById("ongoingContent");
+    const ongoingPagination = document.getElementById("ongoingPagination");
 
     ongoingLoading.style.display = "flex";
     ongoingContent.style.display = "none";
@@ -493,15 +494,20 @@ async function loadOngoingAnime() {
 
         ongoingContent.innerHTML = "";
         console.log(data);
-        if (data.data && data.data.length > 0) {
+        if (data.data && data.data.animeList.length > 0) {
             const animeGrid = document.createElement("div");
             animeGrid.className = "anime-grid";
 
-            data.data.forEach(anime => {
+            data.data.animeList.forEach(anime => {
                 animeGrid.appendChild(createAnimeCardElement(anime));
             });
 
             ongoingContent.appendChild(animeGrid);
+
+            if (data.pagination) {
+                createPagination(ongoingPagination, data.pagination, page);
+                completePagination.style.display = "flex";
+            }
         } else {
             ongoingContent.innerHTML = `
                         <div class="error-message">
