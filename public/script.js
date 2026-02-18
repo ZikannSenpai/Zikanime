@@ -488,6 +488,7 @@ async function loadOngoingAnime(page) {
 
     ongoingLoading.style.display = "flex";
     ongoingContent.style.display = "none";
+    ongoingPagination.style.display = "none";
 
     try {
         const data = await fetchOngoingAnime();
@@ -506,7 +507,7 @@ async function loadOngoingAnime(page) {
 
             if (data.pagination) {
                 createPagination(ongoingPagination, data.pagination, page);
-                completePagination.style.display = "flex";
+                ongoingPagination.style.display = "flex";
             }
         } else {
             ongoingContent.innerHTML = `
