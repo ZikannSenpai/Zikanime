@@ -627,16 +627,8 @@ async function loadSchedule() {
 
         if (data.data) {
             // Assuming data is organized by days
-            const days = [
-                "Senin",
-                "Selasa",
-                "Rabu",
-                "Kamis",
-                "Jumat",
-                "Sabtu",
-                "Minggu"
-            ];
-
+            const days = data.data.flatMap(day => day.day);
+            console.log(days);
             days.forEach(day => {
                 if (data.data[day] && data.data[day].length > 0) {
                     const daySection = document.createElement("div");
