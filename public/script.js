@@ -565,11 +565,11 @@ async function loadCompleteAnime(page) {
 
         completeContent.innerHTML = "";
         console.log(data);
-        if (data.data && data.data.length > 0) {
+        if (data.data && data.data.animeList.length > 0) {
             const animeGrid = document.createElement("div");
             animeGrid.className = "anime-grid";
 
-            data.data.forEach(anime => {
+            data.data.animeList.forEach(anime => {
                 animeGrid.appendChild(createAnimeCardElement(anime));
             });
 
