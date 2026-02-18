@@ -1,9 +1,14 @@
 // pages/api/anime/[...slug].js
 export default async function handler(req, res) {
     try {
-        const { slug = [] } = req.query; // array
+        const { slug = [], ...query } = req.query;
         const path = Array.isArray(slug) ? slug.join("/") : slug || "";
-        const target = `https://www.sankavollerei.com/anime/${path}`;
+
+        const queryString = new URLSearchParams(query).toString();
+        const target = `https://www.sankavollerei.com/anime/${path}${
+            queryString ? `?${queryString}` : ""
+        }`;
+        console.log("PROXY TARGET:", target);
 
         // forward headers/method/body if needed (GET suffices for most)
         const options = { method: req.method || "GET" };
