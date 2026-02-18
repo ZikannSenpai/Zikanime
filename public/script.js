@@ -633,7 +633,7 @@ async function loadSchedule() {
                 const daySection = document.createElement("div");
                 daySection.className = "schedule-day";
 
-                const title = document.createElement("h3");
+                const title = document.createElement("h2");
                 title.textContent = day;
                 title.style.margin = "1.5rem 0 1rem 0";
                 title.style.color = "var(--accent-color)";
