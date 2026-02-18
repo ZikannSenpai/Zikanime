@@ -749,7 +749,7 @@ async function loadGenres() {
 
         genresContent.innerHTML = "";
         console.log(data);
-        if (data.data && data.data.length > 0) {
+        if (data.data && data.data.genreList.length > 0) {
             const genresList = document.createElement("div");
             genresList.className = "genre-list";
             genresList.style.marginBottom = "2rem";
