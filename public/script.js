@@ -1149,7 +1149,7 @@ function createAnimeCardElement(anime) {
     return card;
 }
 
-async function createAnimeCardHTML(anime, slug) {
+function createAnimeCardHTML(anime, slug) {
     const title = anime.title || "Judul Tidak Tersedia";
     const poster =
         anime.poster ||
@@ -1158,7 +1158,7 @@ async function createAnimeCardHTML(anime, slug) {
     const type = anime.type || "TV";
     const score = anime.score || "N/A";
     if (!anime.episodes) {
-        const animes = await fetchAnimeDetail(anime.animeId);
+        const animes = fetchAnimeDetail(anime.animeId);
 
         const episodes = animes.episodes || "?";
     }
