@@ -182,10 +182,10 @@ function setupEventListeners() {
             if (!page) return;
 
             if (type === "ongoing") {
-              ongoingPage = page
+                ongoingPage = page;
                 loadOngoingAnime(ongoingPage);
             } else if (type === "complete") {
-              completePage = page
+                completePage = page;
                 loadCompleteAnime(completePage);
             }
         }
@@ -503,9 +503,8 @@ async function loadOngoingAnime(page) {
 
     try {
         const data = await fetchOngoingAnime(page);
-
+        console.log("ONGOING PAGE:", page, data);
         ongoingContent.innerHTML = "";
-        console.log(data);
         if (data.data && data.data.animeList.length > 0) {
             const animeGrid = document.createElement("div");
             animeGrid.className = "anime-grid";
