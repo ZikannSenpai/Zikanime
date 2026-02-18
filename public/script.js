@@ -635,7 +635,7 @@ async function loadSchedule() {
                     daySection.innerHTML = `
                         <h3 style="margin: 1.5rem 0 1rem 0; color: var(--accent-color);">${day}</h3>
                         <div class="anime-grid" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));">
-                            ${anime_list.map(anime => createAnimeCardHTML(anime)).join("")}
+                            ${anime_list.map(anime => createAnimeCardElement(anime)).join("")}
                         </div>
                     `;
 
