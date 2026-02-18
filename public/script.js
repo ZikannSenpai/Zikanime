@@ -759,7 +759,6 @@ async function loadGenres() {
                 genreTag.className = "genre-tag";
                 genreTag.textContent = genre.title || genre;
                 genreTag.dataset.slug = genre.genreId;
-                console.log(genreTag.dataset);
                 genreTag.style.cursor = "pointer";
                 genresList.appendChild(genreTag);
             });
@@ -964,6 +963,7 @@ async function loadAnimeDetail(slug, title) {
 
                 // Store episodes for later use
                 currentEpisodes = anime.episodeList;
+            setTimeout(setupScrollEffects, 100);
             }
             setTimeout(setupScrollEffects, 100);
         } else {
