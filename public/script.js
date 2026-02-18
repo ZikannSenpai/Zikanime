@@ -1027,9 +1027,7 @@ async function performSearch() {
         if (resultList.length > 0) {
             // Filter anime based on search query
 
-            const allList = data.data.data.animeList.flatMap(
-                group => group || []
-            );
+            const allList = data.data.animeList.flatMap(group => group || []);
             const filteredAnime = allList.filter(anime => {
                 return (
                     anime.title &&
