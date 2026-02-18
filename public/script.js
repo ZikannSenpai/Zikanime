@@ -1157,8 +1157,7 @@ function createAnimeCardHTML(anime, slug) {
 
     const type = anime.type || "TV";
     const score = anime.score || "N/A";
-    const animes = fetchAnimeDetail(anime.animeId);
-    const episodes = animes.episodes || "Unknown";
+    const episodes = anime.episodes || "?";
 
     return `
         <img src="${poster}" alt="${title}" class="anime-poster"
