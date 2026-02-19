@@ -1,8 +1,15 @@
 {
-  "rewrites": [
+  "rewrites": [{
+    "source": "/info",
+    "destination": "/info/info.html"
+  },
     {
-      "source": "/info",
-      "destination": "/info/info.html"
-    }
+      "source": "/login",
+      "destination": "/login.html"
+    },
+    {
+      "source": "/regist",
+      "destination": "/register.html"
+    },
   ]
 }
