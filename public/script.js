@@ -7,6 +7,7 @@ let ongoingPage = 1;
 let completePage = 1;
 let currentAnimeSlug = "";
 let currentEpisodes = [];
+let userToken = localStorage.getItem("token");
 
 // DOM Elements
 const mobileMenuBtn = document.getElementById("mobileMenuBtn");
@@ -427,6 +428,44 @@ async function fetchEpisode(slug) {
     }
 }
 
+async function saveWatchProgress(animeSlug, episodeSlug) {
+    if (!userToken) return;
+
+    try {
+        await fetch("/api/user/progress", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + userToken
+            },
+            body: JSON.stringify({
+                animeSlug,
+                episodeSlug
+            })
+        });
+    } catch (err) {
+        console.error("Gagal simpan progress:", err);
+    }
+}
+
+async function getUserProgress() {
+    if (!userToken) return null;
+
+    try {
+        const res = await fetch("/api/user/progress", {
+            headers: {
+                Authorization: "Bearer " + userToken
+            }
+        });
+
+        if (!res.ok) return null;
+
+        return await res.json();
+    } catch {
+        return null;
+    }
+}
+
 // Load data untuk halaman beranda
 async function loadHomeData() {
     const homeLoading = document.getElementById("homeLoading");
@@ -438,6 +477,23 @@ async function loadHomeData() {
     try {
         const data = await fetchHomeData();
         // Clear previous content
+        const userProgress = await getUserProgress();
+
+        if (userProgress && userProgress.animeSlug) {
+            const continueSection = document.createElement("section");
+            continueSection.innerHTML = `
+        <div class="section-title">
+            <h2>Lanjut Nonton</h2>
+        </div>
+        <div style="padding:20px;">
+            <button class="watch-btn"
+                onclick="loadAnimeDetail('${userProgress.animeSlug}')">
+                Lanjut ke Anime Terakhir
+            </button>
+        </div>
+    `;
+            homeContent.appendChild(continueSection);
+        }
 
         homeContent.innerHTML = "";
 
@@ -1000,6 +1056,9 @@ async function loadEpisode(slug, title) {
 
         if (data.data) {
             const episode = data.data;
+
+            saveWatchProgress(currentAnimeSlug, slug);
+
             const server = await fetchServer(
                 episode.server.qualities[2].serverList[0].serverId ||
                     episode.server.qualities[1].serverList[0].serverId
