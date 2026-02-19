@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Login | ZikAnime</title>
+        <link rel="stylesheet" href="/style.css" />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap"
+            rel="stylesheet"
+        />
+    </head>
+    <body>
+        <header>
+            <div class="header-container">
+                <div class="logo">Zik<span>Anime</span></div>
+            </div>
+        </header>
+
+        <main class="container">
+            <div class="section-title">
+                <h2>Login</h2>
+            </div>
+
+            <div style="max-width: 400px; margin: 0 auto">
+                <div
+                    class="anime-card fade-in"
+                    style="padding: 2rem; opacity: 1; transform: none"
+                >
+                    <div style="margin-bottom: 1rem">
+                        <input
+                            type="text"
+                            id="username"
+                            placeholder="Username"
+                            class="search-box"
+                            style="width: 100%"
+                        />
+                    </div>
+
+                    <div style="margin-bottom: 1.5rem">
+                        <input
+                            type="password"
+                            id="password"
+                            placeholder="Password"
+                            class="search-box"
+                            style="width: 100%"
+                        />
+                    </div>
+
+                    <button class="watch-btn" onclick="loginUser()">
+                        Login
+                    </button>
+
+                    <p
+                        id="errorMsg"
+                        class="error-message"
+                        style="display: none; margin-top: 1rem"
+                    ></p>
+                    <p style="margin-top:1rem; text-align:center; color:var(--text-secondary);">
+                Belum punya akun? 
+                <a href="/register.html" style="color:var(--accent-color); text-decoration:none;">
+                    Register
+                </a>
+            </p>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <div class="footer-logo">Zik<span>Anime</span></div>
+                <div class="copyright">© 2026 ZikAnime</div>
+            </div>
+        </footer>
+
+        <script>
+            async function loginUser() {
+                const username = document.getElementById("username").value;
+                const password = document.getElementById("password").value;
+                const errorMsg = document.getElementById("errorMsg");
+
+                errorMsg.style.display = "none";
+
+                try {
+                    const res = await fetch("/api/auth/login", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ username, password })
+                    });
+
+                    const data = await res.json();
+
+                    if (!res.ok) {
+                        errorMsg.style.display = "block";
+                        errorMsg.textContent = data.message || "Login gagal";
+                        return;
+                    }
+
+                    localStorage.setItem("token", data.token);
+                    window.location.href = "/";
+                } catch (err) {
+                    errorMsg.style.display = "block";
+                    errorMsg.textContent = "Server error";
+                }
+            }
+        </script>
+    </body>
+</html>
