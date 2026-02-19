@@ -1,133 +1,145 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Register | ZikAnime</title>
-    <link rel="stylesheet" href="/style.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
-</head>
-<body>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Register | ZikAnime</title>
+        <link rel="stylesheet" href="/style.css" />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap"
+            rel="stylesheet"
+        />
+    </head>
+    <body>
+        <header>
+            <div class="header-container">
+                <div class="logo">Zika<span>Anime</span></div>
+            </div>
+        </header>
 
-<header>
-    <div class="header-container">
-        <div class="logo">
-            Zika<span>Anime</span>
-        </div>
-    </div>
-</header>
-
-<main class="container">
-    <div class="section-title">
-        <h2>Register</h2>
-    </div>
-
-    <div style="max-width: 400px; margin: 0 auto;">
-        <div class="anime-card fade-in" style="padding: 2rem; opacity:1; transform:none;">
-
-            <div style="margin-bottom:1rem;">
-                <input 
-                    type="text" 
-                    id="username" 
-                    placeholder="Username"
-                    class="search-box"
-                    style="width:100%;"
-                />
+        <main class="container">
+            <div class="section-title">
+                <h2>Register</h2>
             </div>
 
-            <div style="margin-bottom:1rem;">
-                <input 
-                    type="password" 
-                    id="password" 
-                    placeholder="Password"
-                    class="search-box"
-                    style="width:100%;"
-                />
+            <div style="max-width: 400px; margin: 0 auto">
+                <div
+                    class="anime-card fade-in"
+                    style="padding: 2rem; opacity: 1; transform: none"
+                >
+                    <div style="margin-bottom: 1rem">
+                        <input
+                            type="text"
+                            id="username"
+                            placeholder="Username"
+                            class="search-box"
+                            style="width: 100%"
+                        />
+                    </div>
+
+                    <div style="margin-bottom: 1rem">
+                        <input
+                            type="password"
+                            id="password"
+                            placeholder="Password"
+                            class="search-box"
+                            style="width: 100%"
+                        />
+                    </div>
+
+                    <div style="margin-bottom: 1.5rem">
+                        <input
+                            type="password"
+                            id="confirmPassword"
+                            placeholder="Confirm Password"
+                            class="search-box"
+                            style="width: 100%"
+                        />
+                    </div>
+
+                    <button class="watch-btn" onclick="registerUser()">
+                        Register
+                    </button>
+
+                    <p
+                        id="errorMsg"
+                        class="error-message"
+                        style="display: none; margin-top: 1rem"
+                    ></p>
+
+                    <p
+                        style="
+                            margin-top: 1rem;
+                            text-align: center;
+                            color: var(--text-secondary);
+                        "
+                    >
+                        Sudah punya akun?
+                        <a
+                            href="/login.html"
+                            style="
+                                color: var(--accent-color);
+                                text-decoration: none;
+                            "
+                        >
+                            Login
+                        </a>
+                    </p>
+                </div>
             </div>
+        </main>
 
-            <div style="margin-bottom:1.5rem;">
-                <input 
-                    type="password" 
-                    id="confirmPassword" 
-                    placeholder="Confirm Password"
-                    class="search-box"
-                    style="width:100%;"
-                />
+        <footer>
+            <div class="footer-content">
+                <div class="footer-logo">Zik<span>Anime</span></div>
+                <div class="copyright">© 2026 ZikAnime</div>
             </div>
+        </footer>
 
-            <button class="watch-btn" onclick="registerUser()">
-                Register
-            </button>
+        <script>
+            async function registerUser() {
+                const username = document.getElementById("username").value;
+                const password = document.getElementById("password").value;
+                const confirmPassword =
+                    document.getElementById("confirmPassword").value;
+                const errorMsg = document.getElementById("errorMsg");
 
-            <p id="errorMsg" class="error-message" style="display:none; margin-top:1rem;"></p>
+                errorMsg.style.display = "none";
 
-            <p style="margin-top:1rem; text-align:center; color:var(--text-secondary);">
-                Sudah punya akun? 
-                <a href="/login.html" style="color:var(--accent-color); text-decoration:none;">
-                    Login
-                </a>
-            </p>
+                if (!username || !password) {
+                    errorMsg.style.display = "block";
+                    errorMsg.textContent = "Isi semua field dulu.";
+                    return;
+                }
 
-        </div>
-    </div>
-</main>
+                if (password !== confirmPassword) {
+                    errorMsg.style.display = "block";
+                    errorMsg.textContent = "Password tidak cocok.";
+                    return;
+                }
 
-<footer>
-    <div class="footer-content">
-        <div class="footer-logo">
-            Zik<span>Anime</span>
-        </div>
-        <div class="copyright">
-            © 2026 ZikAnime
-        </div>
-    </div>
-</footer>
+                try {
+                    const res = await fetch("/api/auth/register", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ username, password })
+                    });
 
-<script>
-async function registerUser() {
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
-    const confirmPassword = document.getElementById("confirmPassword").value;
-    const errorMsg = document.getElementById("errorMsg");
+                    const data = await res.json();
 
-    errorMsg.style.display = "none";
+                    if (!res.ok) {
+                        errorMsg.style.display = "block";
+                        errorMsg.textContent = data.message || "Register gagal";
+                        return;
+                    }
 
-    if (!username || !password) {
-        errorMsg.style.display = "block";
-        errorMsg.textContent = "Isi semua field dulu.";
-        return;
-    }
-
-    if (password !== confirmPassword) {
-        errorMsg.style.display = "block";
-        errorMsg.textContent = "Password tidak cocok.";
-        return;
-    }
-
-    try {
-        const res = await fetch("/api/auth/register", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, password })
-        });
-
-        const data = await res.json();
-
-        if (!res.ok) {
-            errorMsg.style.display = "block";
-            errorMsg.textContent = data.message || "Register gagal";
-            return;
-        }
-
-        localStorage.setItem("token", data.token);
-        window.location.href = "/";
-
-    } catch (err) {
-        errorMsg.style.display = "block";
-        errorMsg.textContent = "Server error";
-    }
-}
-</script>
-
-</body>
+                    localStorage.setItem("token", data.token);
+                    window.location.href = "/";
+                } catch (err) {
+                    errorMsg.style.display = "block";
+                    errorMsg.textContent = "Server error";
+                }
+            }
+        </script>
+    </body>
 </html>
