@@ -2,6 +2,13 @@
   "rewrites": [{
     "source": "/info",
     "destination": "/info/info.html"
-
-  }]
+  },
+    {
+      "source": "/log",
+      "destination": "/login.html"
+    },
+    {
+      "source": "/reg",
+      "destination": "/register.html"
+    }]
 }
