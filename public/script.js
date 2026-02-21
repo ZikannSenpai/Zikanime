@@ -1092,6 +1092,7 @@ async function loadEpisode(slug, title) {
                 episode.description || "Tidak ada deskripsi tersedia";
 
             // Create episode selector if we have multiple episodes
+
             if (currentEpisodes && currentEpisodes.length > 0) {
                 episodeSelector.innerHTML = "";
                 currentEpisodes.forEach(ep => {

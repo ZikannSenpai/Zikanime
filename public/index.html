@@ -3,7 +3,10 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="description" content="Deskripsi singkat tentang website Anda, maksimal 160 karakter">
+        <meta
+            name="description"
+            content="Deskripsi singkat tentang website Anda, maksimal 160 karakter"
+        />
         <title>ZikAnime | Streaming Anime</title>
 
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
@@ -226,102 +229,5 @@
         <!-- ===== SCRIPT ASLI ===== -->
 
         <script src="script.js"></script>
-
-        <!-- ===== PLAYER PATCH ===== -->
-
-        <script>
-            async function openEpisodePlayer(id, title = "Memuat...") {
-                const modal = document.getElementById("videoModal");
-                const player = document.getElementById("videoPlayer");
-                const videoTitle = document.getElementById("videoTitle");
-
-                modal.style.display = "flex";
-                videoTitle.textContent = title;
-
-                player.innerHTML = `<p style="color:white">Memuat video...</p>`;
-
-                try {
-                    const res = await fetch(`/api/anime/episode/${id}`);
-                    const json = await res.json();
-                    const data = json.data;
-
-                    player.innerHTML = `
-<div class="player-wrapper">
-<iframe src="${data.defaultStreamingUrl}" frameborder="0" allowfullscreen></iframe>
-</div>`;
-
-                    renderEpisodeButtons(data.info?.episodeList || []);
-                } catch (err) {
-                    player.innerHTML = `<p style="color:red">Gagal memuat stream</p>`;
-                    console.error(err);
-                }
-            }
-
-            function renderEpisodeButtons(list) {
-                const container = document.getElementById("episodeSelector");
-                container.innerHTML = "";
-
-                list.forEach(ep => {
-                    const btn = document.createElement("button");
-                    btn.textContent = ep.title;
-                    btn.onclick = () =>
-                        openEpisodePlayer(ep.episodeId, ep.title);
-                    container.appendChild(btn);
-                });
-            }
-
-            document.getElementById("closeVideoBtn").onclick = () => {
-                document.getElementById("videoModal").style.display = "none";
-                document.getElementById("videoPlayer").innerHTML = "";
-            };
-
-            window.playEpisode = openEpisodePlayer;
-        </script>
-
-        <!-- ===== CLICK POSTER = PLAY ===== -->
-
-        <script>
-            document.addEventListener("click", async e => {
-                const card = e.target.closest(".anime-card");
-                if (!card) return;
-
-                const link = card.querySelector("a");
-                if (!link) return;
-
-                e.preventDefault();
-
-                try {
-                    const slug = link.href.split("/").pop();
-
-                    const res = await fetch(`/api/anime/detail/${slug}`);
-                    const json = await res.json();
-
-                    const eps = json.data?.episodeList;
-                    if (!eps?.length) return alert("Episode belum tersedia");
-
-                    playEpisode(eps[0].episodeId, eps[0].title);
-                } catch (err) {
-                    console.error(err);
-                }
-            });
-        </script>
-
-        <!-- ===== RESPONSIVE PLAYER STYLE ===== -->
-
-        <style>
-            .player-wrapper {
-                position: relative;
-                width: 100%;
-                padding-top: 56.25%;
-            }
-
-            .player-wrapper iframe {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-            }
-        </style>
     </body>
 </html>
